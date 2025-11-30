@@ -9,24 +9,21 @@ export default function Index() {
   const navigationState = useRootNavigationState();
 
   useEffect(() => {
-    // Đợi navigation ready
     if (!navigationState?.key) return;
     if (loading) return;
 
-    console.log("Index navigation - User:", user?.email, "Role:", role);
+    console.log("Redirector - User:", user?.email, "Role:", role);
 
     if (!user) {
-      console.log("Redirecting to login");
-      router.replace("/login");
+      router.replace("/(auth)/login");
       return;
     }
 
     if (role) {
-      console.log("Redirecting to:", role);
       if (role === "admin") {
-        router.replace("/(tabs)/admin");
+        router.replace("/(admin)/dashboard");
       } else {
-        router.replace("/(tabs)/user");
+        router.replace("/(user)/home");
       }
     }
   }, [loading, user, role, navigationState?.key]);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "../context/auth";
+import { useAuth } from "../../context/auth";
 import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
@@ -16,9 +16,9 @@ export default function LoginScreen() {
     if (user && role) {
       console.log("Auto-redirect from login:", role);
       if (role === "admin") {
-        router.replace("/(tabs)/admin");
+        router.replace("/(admin)/dashboard");
       } else {
-        router.replace("/(tabs)/user");
+        router.replace("/(user)/home");
       }
     }
   }, [user, role]);
