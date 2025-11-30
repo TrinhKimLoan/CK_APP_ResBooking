@@ -1,35 +1,46 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuth } from '../../context/auth';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { user, role, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  if (!user) {
+    return <Redirect href="/login" />;
+  }
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
+    <Tabs screenOptions={{ headerShown: false }}>
+      {/* User tab - ai cũng xem được */}
+      <Tabs.Screen 
+        name="menu" 
+        options={{ 
+          title: "Trang Menu",
+        }} 
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
+      
+      {/* Admin menu tab - chỉ admin thấy */}
+      <Tabs.Screen 
+        name="admin-menu" 
+        options={{ 
+          title: "Thêm Món",
+          href: role === "admin" ? "/(tabs)/admin-menu" : null,
+        }} 
+      />
+      
+      {/* Admin panel tab - chỉ admin thấy */}
+      <Tabs.Screen 
+        name="admin" 
+        options={{ 
+          title: "Admin Panel",
+          href: role === "admin" ? "/(tabs)/admin" : null,
+        }} 
       />
     </Tabs>
+    
   );
 }
