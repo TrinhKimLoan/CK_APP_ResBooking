@@ -1,12 +1,21 @@
+import { User } from "@supabase/supabase-js";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { User } from "@supabase/supabase-js";
 
 type AuthContextType = {
   user: User | null;
   role: string | null;
   loading: boolean;
   signOut: () => Promise<void>;
+};
+
+const normalizeRole = (value?: string | null) => {
+  if (!value) return "user";
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "admin" || normalized === "user") {
+    return normalized;
+  }
+  return normalized || "user";
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -34,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return "user";
       }
 
-      return data?.role || "user";
+      return normalizeRole(data?.role);
     } catch (error) {
       console.log("Error in fetchRole:", error);
       return "user";
@@ -52,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           setUser(session.user);
           const userRole = await fetchRole(session.user.id);
-          setRole(userRole);
+          setRole(normalizeRole(userRole));
           console.log("Initial role:", userRole);
         }
       } catch (error) {
@@ -76,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (session?.user) {
             setUser(session.user);
             const userRole = await fetchRole(session.user.id);
-            setRole(userRole);
+            setRole(normalizeRole(userRole));
             console.log("Updated role:", userRole);
           } else {
             setUser(null);

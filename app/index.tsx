@@ -1,7 +1,7 @@
+import { useRootNavigationState, useRouter } from "expo-router";
 import { useEffect } from "react";
-import { useRouter, useRootNavigationState } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
 import { useAuth } from "../context/auth";
-import { View, ActivityIndicator } from "react-native";
 
 export default function Index() {
   const { user, role, loading } = useAuth();
@@ -14,14 +14,16 @@ export default function Index() {
 
     console.log("Redirector - User:", user?.email, "Role:", role);
 
+    const normalizedRole = role?.toLowerCase();
+
     if (!user) {
       router.replace("/(auth)/login");
       return;
     }
 
-    if (role) {
-      if (role === "admin") {
-        router.replace("/(admin)/dashboard");
+    if (normalizedRole) {
+      if (normalizedRole === "admin") {
+        router.replace("/(admin)/orders-management");
       } else {
         router.replace("/(user)/home");
       }

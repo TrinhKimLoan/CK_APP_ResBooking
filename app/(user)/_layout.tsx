@@ -1,14 +1,15 @@
 // app/(user)/_layout.tsx
-import { Tabs } from 'expo-router';
 import { useAuth } from '@/context/auth';
-import { Redirect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Redirect, Tabs } from 'expo-router';
 
 export default function UserLayout() {
-  const { user, loading } = useAuth();
+  const { user, loading, role } = useAuth();
+  const normalizedRole = role?.toLowerCase();
 
   if (loading) return null;
   if (!user) return <Redirect href="/(auth)/login" />;
+  if (normalizedRole === 'admin') return <Redirect href="/(admin)/dashboard" />;
 
   return (
     <Tabs screenOptions={{ 
@@ -34,6 +35,26 @@ export default function UserLayout() {
           title: "Thực Đơn",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="restaurant" size={size} color={color} />
+          ),
+        }} 
+      />
+
+      <Tabs.Screen 
+        name="reservations" 
+        options={{ 
+          title: "Đặt bàn",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar" size={size} color={color} />
+          ),
+        }} 
+      />
+
+      <Tabs.Screen 
+        name="orders" 
+        options={{ 
+          title: "Đơn của tôi",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="receipt" size={size} color={color} />
           ),
         }} 
       />
