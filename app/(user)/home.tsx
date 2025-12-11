@@ -59,7 +59,9 @@ export default function HomeScreen() {
       {/* Banner */}
       <Image
         style={styles.banner}
-        source={{ uri: "https://treobangron.com.vn/wp-content/uploads/2022/12/banner-quang-cao-nha-hang-32.jpg" }}
+        source={{
+          uri: "https://treobangron.com.vn/wp-content/uploads/2022/12/banner-quang-cao-nha-hang-32.jpg",
+        }}
       />
 
       <View style={styles.bannerContent}>
@@ -109,7 +111,9 @@ export default function HomeScreen() {
       {/* Về chúng tôi */}
       <View style={styles.aboutBox}>
         <Text style={styles.aboutTitle}>Về chúng tôi</Text>
-        <Text style={styles.aboutDesc}>Mô tả ngắn về nhà hàng....</Text>
+        <Text style={styles.aboutDesc}>
+          Nhà hàng phục vụ các món ăn Á – Âu với không gian ấm cúng.
+        </Text>
 
         <View style={styles.aboutRow}>
           <Ionicons name="time-outline" size={20} color="#000" />
@@ -162,11 +166,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
   },
-  aboutTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 8,
-  },
+  aboutTitle: { fontSize: 18, fontWeight: "700", marginBottom: 8 },
   aboutDesc: { fontSize: 14, color: "#555", marginBottom: 12 },
   aboutRow: {
     flexDirection: "row",

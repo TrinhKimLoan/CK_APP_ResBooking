@@ -1,23 +1,27 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
 
-export default function SeatCard({ item }: any) {
+export default function FoodCard({ item }: any) {
+  const img = item?.img ?? "";
+  const hasValidImage = typeof img === "string" && img.startsWith("http");
+
+  const fallback = require("@/assets/app/default_food.png");
+
+  const imageSource = hasValidImage ? { uri: img } : fallback;
+
   return (
     <TouchableOpacity
       style={styles.card}
-      activeOpacity={0.8}
-      onPress={() =>
-        router.push({
-          pathname: "/",// Thêm để tới trang đặt bàn nha loan
-          params: { table_id: item.id },
-        })
-      }
+      activeOpacity={0.85}
+      onPress={() => router.push(`/detail_food?id=${item.id}`)}
     >
-      <Image source={{ uri: item.image }} style={styles.image} />
+      <Image source={imageSource} style={styles.image} resizeMode="cover" />
 
-      <View style={{ marginTop: 6 }}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.desc}>{item.desc}</Text>
+      <View style={{ flex: 1, marginLeft: 10 }}>
+        <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
+        <Text style={styles.price}>
+          {Number(item.price).toLocaleString("vi-VN")} VND
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -25,25 +29,18 @@ export default function SeatCard({ item }: any) {
 
 const styles = StyleSheet.create({
   card: {
-    width: 160,
-    marginRight: 12,
+    flexDirection: "row",
     backgroundColor: "#fff",
-    borderRadius: 12,
     padding: 10,
+    borderRadius: 12,
+    marginBottom: 12,
   },
   image: {
-    width: "100%",
-    height: 100,
+    width: 90,
+    height: 90,
     borderRadius: 10,
     backgroundColor: "#eee",
   },
-  name: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginTop: 6,
-  },
-  desc: {
-    color: "#777",
-    fontSize: 13,
-  },
+  name: { fontSize: 16, fontWeight: "600" },
+  price: { marginTop: 4, fontSize: 14, color: "#444" },
 });
