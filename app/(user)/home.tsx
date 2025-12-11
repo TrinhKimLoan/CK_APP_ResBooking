@@ -50,7 +50,7 @@ export default function HomeScreen() {
       return;
     }
 
-    setFoods((data || []).slice(0, 3)); // Lấy 3 món đầu
+    setFoods((data || []).slice(0, 5)); // chỉ lấy 5 món đầu
     setLoading(false);
   }
 
@@ -67,12 +67,14 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>Không gian ấm cúng cho mỗi bữa tiệc</Text>
       </View>
 
-      <Link href="/" asChild> 
+      {/* Đặt bàn ngay */}
+      <Link href="/" asChild>
         <View style={styles.bookBtn}>
           <Text style={styles.bookBtnText}>Đặt bàn ngay</Text>
         </View>
       </Link>
 
+      {/* Chỗ ngồi nổi bật */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Chỗ ngồi nổi bật</Text>
 
@@ -83,6 +85,7 @@ export default function HomeScreen() {
         </ScrollView>
       </View>
 
+      {/* Món ăn */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Các món ăn</Text>
 
@@ -106,22 +109,18 @@ export default function HomeScreen() {
       {/* Về chúng tôi */}
       <View style={styles.aboutBox}>
         <Text style={styles.aboutTitle}>Về chúng tôi</Text>
-
         <Text style={styles.aboutDesc}>Mô tả ngắn về nhà hàng....</Text>
 
-        {/* Giờ mở cửa */}
         <View style={styles.aboutRow}>
           <Ionicons name="time-outline" size={20} color="#000" />
           <Text style={styles.aboutText}>Giờ mở cửa</Text>
         </View>
 
-        {/* Hotline */}
         <View style={styles.aboutRow}>
           <Ionicons name="call-outline" size={20} color="#000" />
           <Text style={styles.aboutText}>Hotline</Text>
         </View>
 
-        {/* Địa điểm */}
         <View style={styles.aboutRow}>
           <Ionicons name="location-outline" size={20} color="#000" />
           <Text style={styles.aboutText}>Địa điểm</Text>
@@ -144,6 +143,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  bookBtn: {
+    marginTop: 12,
+    backgroundColor: "#f59e0b",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignSelf: "center",
+  },
+  bookBtnText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "600",
+  },
   aboutBox: {
     backgroundColor: "#f5f5f5",
     margin: 16,
@@ -155,33 +167,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 8,
   },
-  aboutDesc: {
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 12,
-  },
-  bookBtn: {
-  marginTop: 12,
-  backgroundColor: "#f59e0b",
-  paddingVertical: 12,
-  paddingHorizontal: 20,
-  borderRadius: 10,
-  alignSelf: "center",
-},
-  bookBtnText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-
-    aboutRow: {
+  aboutDesc: { fontSize: 14, color: "#555", marginBottom: 12 },
+  aboutRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
   },
-  aboutText: {
-    marginLeft: 8,
-    fontSize: 15,
-    color: "#333",
-  },
+  aboutText: { marginLeft: 8, fontSize: 15, color: "#333" },
 });

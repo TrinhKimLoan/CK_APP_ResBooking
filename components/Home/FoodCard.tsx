@@ -1,15 +1,24 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { router } from "expo-router";
 
-export default function FoodCard({ item, onPress }: any) {
-  // RULE: nếu img hợp lệ thì dùng img, không thì dùng asset
+export default function FoodCard({ item }: any) {
   const hasValidImage = item.img && item.img.startsWith("http");
 
   const imageSource = hasValidImage
     ? { uri: item.img }
-    : require("@/assets/app/default_food.png"); // ảnh từ asset
+    : require("@/assets/app/default_food.png");
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      onPress={() =>
+        router.push({
+        pathname: "/detail_food",
+        params: { id: item.id },
+        })
+      }
+    >
       <Image source={imageSource} style={styles.image} />
 
       <View style={{ flex: 1, marginLeft: 10 }}>
@@ -18,13 +27,11 @@ export default function FoodCard({ item, onPress }: any) {
           {Number(item.price).toLocaleString("vi-VN")} VND
         </Text>
 
-        {onPress && (
-          <TouchableOpacity style={styles.btn} onPress={onPress}>
-            <Text style={{ fontSize: 13 }}>Xem chi tiết</Text>
-          </TouchableOpacity>
-        )}
+        <View style={styles.btn}>
+          <Text style={{ fontSize: 13 }}>Xem chi tiết</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
