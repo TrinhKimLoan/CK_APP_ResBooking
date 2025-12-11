@@ -1,136 +1,187 @@
-// app/(user)/home.tsx
-import { View, Text, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  ScrollView,
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+import { supabase } from "@/lib/supabase";
+import FoodCard from "@/components/Home/FoodCard";
+import SeatCard from "@/components/Home/SeatCard";
+import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function HomeScreen() {
-  const featuredTables = [
+  const [foods, setFoods] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const seats = [
     {
-      id: "1",
+      id: 1,
       name: "Bàn B3 - Tầng 2",
       desc: "Bàn 4 người",
-      image: require("@/assets/app/seat.png"),
+      image: "https://i.imgur.com/tVv8a7X.jpeg",
     },
     {
-      id: "2",
+      id: 2,
       name: "Bàn B7 - Tầng 3",
       desc: "Bàn 6 người",
-      image: require("@/assets/app/seat.png"),
+      image: "https://i.imgur.com/tVv8a7X.jpeg",
     },
     {
-      id: "3",
+      id: 3,
       name: "Bàn B5",
       desc: "Bàn 2 người",
-      image: require("@/assets/app/seat.png"),
+      image: "https://i.imgur.com/tVv8a7X.jpeg",
     },
   ];
 
-  const featuredFoods = [
-    {
-      id: "1",
-      name: "Gà rán",
-      price: "150.000 VND",
-      image: require("@/assets/app/food.png"),
-    },
-    {
-      id: "2",
-      name: "Gà rán",
-      price: "150.000 VND",
-      image: require("@/assets/app/food.png"),
-    },
-    {
-      id: "3",
-      name: "Gà rán",
-      price: "150.000 VND",
-      image: require("@/assets/app/food.png"),
-    },
-  ];
+  useEffect(() => {
+    loadFoods();
+  }, []);
+
+  async function loadFoods() {
+    const { data, error } = await supabase.from("menu").select("*");
+
+    if (error) {
+      console.error("Lỗi load menu:", error.message);
+      return;
+    }
+
+    setFoods((data || []).slice(0, 3)); // Lấy 3 món đầu
+    setLoading(false);
+  }
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      
-      {/* --- BANNER --- */}
-      <View className="w-full h-56">
-        <Image
-          source={require("@/assets/app/banner.png")}
-          className="w-full h-full"
-          resizeMode="cover"
-        />
+    <ScrollView style={{ backgroundColor: "#fff" }}>
+      {/* Banner */}
+      <Image
+        style={styles.banner}
+        source={{ uri: "https://i.imgur.com/efQvJkW.jpeg" }}
+      />
 
-        <View className="absolute top-16 left-4">
-          <Text className="text-2xl text-white font-bold">
-            Nhà hàng phong cách Á - Âu
-          </Text>
-          <Text className="text-white mt-1">
-            Không gian ấm cúng cho mọi bữa tiệc
-          </Text>
+      <View style={styles.bannerContent}>
+        <Text style={styles.title}>Nhà hàng phong cách Á - Âu</Text>
+        <Text style={styles.subtitle}>Không gian ấm cúng cho mỗi bữa tiệc</Text>
+      </View>
 
-          <TouchableOpacity className="mt-4 bg-orange-500 rounded-xl px-6 py-3">
-            <Text className="text-white font-semibold text-lg">Đặt bàn ngay</Text>
-          </TouchableOpacity>
+      <Link href="/" asChild> 
+        <View style={styles.bookBtn}>
+          <Text style={styles.bookBtnText}>Đặt bàn ngay</Text>
         </View>
+      </Link>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Chỗ ngồi nổi bật</Text>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {seats.map((seat) => (
+            <SeatCard key={seat.id} item={seat} />
+          ))}
+        </ScrollView>
       </View>
 
-      {/* --- CHỖ NGỒI NỔI BẬT --- */}
-      <View className="px-4 mt-6">
-        <Text className="font-bold text-lg mb-3">Chỗ ngồi nổi bật</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Các món ăn</Text>
 
-        <FlatList
-          data={featuredTables}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View className="mr-4 bg-white rounded-xl shadow-sm w-40">
-              <Image
-                source={item.image}
-                className="w-full h-28 rounded-xl"
-              />
-              <View className="p-2">
-                <Text className="font-semibold">{item.name}</Text>
-                <Text className="text-gray-500 text-sm">{item.desc}</Text>
-              </View>
-            </View>
-          )}
-        />
+        <Link href="/(user)/menu">
+          <Text style={{ color: "#777" }}>Xem tất cả →</Text>
+        </Link>
       </View>
 
-      {/* --- MÓN ĂN --- */}
-      <View className="px-4 mt-8">
-        <View className="flex-row justify-between items-center mb-3">
-          <Text className="font-bold text-lg">Các món ăn</Text>
-          <Text className="text-gray-500">Xem tất cả</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ paddingLeft: 16 }}
+      >
+        {loading ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          foods.map((food) => <FoodCard key={food.id} item={food} />)
+        )}
+      </ScrollView>
+
+      {/* Về chúng tôi */}
+      <View style={styles.aboutBox}>
+        <Text style={styles.aboutTitle}>Về chúng tôi</Text>
+
+        <Text style={styles.aboutDesc}>Mô tả ngắn về nhà hàng....</Text>
+
+        {/* Giờ mở cửa */}
+        <View style={styles.aboutRow}>
+          <Ionicons name="time-outline" size={20} color="#000" />
+          <Text style={styles.aboutText}>Giờ mở cửa</Text>
         </View>
 
-        <FlatList
-          data={featuredFoods}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View className="mr-4 bg-white rounded-xl shadow-sm w-40">
-              <Image
-                source={item.image}
-                className="w-full h-28 rounded-xl"
-              />
-              <View className="p-2">
-                <Text className="font-semibold">{item.name}</Text>
-                <Text className="text-orange-600">{item.price}</Text>
-              </View>
-            </View>
-          )}
-        />
-      </View>
+        {/* Hotline */}
+        <View style={styles.aboutRow}>
+          <Ionicons name="call-outline" size={20} color="#000" />
+          <Text style={styles.aboutText}>Hotline</Text>
+        </View>
 
-      {/* --- VỀ CHÚNG TÔI --- */}
-      <View className="mx-4 mt-8 mb-10 bg-gray-100 p-4 rounded-xl">
-        <Text className="font-bold text-lg mb-2">Về chúng tôi</Text>
-        <Text className="text-gray-600 mb-3">
-          Mô tả ngắn về nhà hàng....
-        </Text>
-
-        <View className="mt-1 space-y-2">
-          <Text>🕒 Giờ mở cửa</Text>
-          <Text>📞 Hotline</Text>
-          <Text>📍 Địa điểm</Text>
+        {/* Địa điểm */}
+        <View style={styles.aboutRow}>
+          <Ionicons name="location-outline" size={20} color="#000" />
+          <Text style={styles.aboutText}>Địa điểm</Text>
         </View>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  banner: { width: "100%", height: 220 },
+  bannerContent: { padding: 16 },
+  title: { fontSize: 20, fontWeight: "700" },
+  subtitle: { marginTop: 4, color: "#555" },
+  section: { marginTop: 20, paddingLeft: 16 },
+  sectionTitle: { fontSize: 18, fontWeight: "600" },
+  sectionHeader: {
+    marginTop: 20,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  aboutBox: {
+    backgroundColor: "#f5f5f5",
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
+  },
+  aboutTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  aboutDesc: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 12,
+  },
+  bookBtn: {
+  marginTop: 12,
+  backgroundColor: "#f59e0b",
+  paddingVertical: 12,
+  paddingHorizontal: 20,
+  borderRadius: 10,
+  alignSelf: "center",
+},
+  bookBtnText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+
+    aboutRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  aboutText: {
+    marginLeft: 8,
+    fontSize: 15,
+    color: "#333",
+  },
+});
