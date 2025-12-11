@@ -1,35 +1,23 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
 
-export default function FoodCard({ item }: any) {
-  const hasValidImage = item.img && item.img.startsWith("http");
-
-  const imageSource = hasValidImage
-    ? { uri: item.img }
-    : require("@/assets/app/default_food.png");
-
+export default function SeatCard({ item }: any) {
   return (
     <TouchableOpacity
       style={styles.card}
       activeOpacity={0.8}
       onPress={() =>
         router.push({
-        pathname: "/detail_food",
-        params: { id: item.id },
+          pathname: "/",// Thêm để tới trang đặt bàn nha loan
+          params: { table_id: item.id },
         })
       }
     >
-      <Image source={imageSource} style={styles.image} />
+      <Image source={{ uri: item.image }} style={styles.image} />
 
-      <View style={{ flex: 1, marginLeft: 10 }}>
+      <View style={{ marginTop: 6 }}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.price}>
-          {Number(item.price).toLocaleString("vi-VN")} VND
-        </Text>
-
-        <View style={styles.btn}>
-          <Text style={{ fontSize: 13 }}>Xem chi tiết</Text>
-        </View>
+        <Text style={styles.desc}>{item.desc}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -37,26 +25,25 @@ export default function FoodCard({ item }: any) {
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: "row",
+    width: 160,
+    marginRight: 12,
     backgroundColor: "#fff",
-    padding: 10,
     borderRadius: 12,
-    marginBottom: 12,
+    padding: 10,
   },
   image: {
-    width: 90,
-    height: 90,
+    width: "100%",
+    height: 100,
     borderRadius: 10,
     backgroundColor: "#eee",
   },
-  name: { fontSize: 16, fontWeight: "600" },
-  price: { marginVertical: 6, color: "#444" },
-  btn: {
-    marginTop: 4,
-    backgroundColor: "#f0f0f0",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    alignSelf: "flex-start",
+  name: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginTop: 6,
+  },
+  desc: {
+    color: "#777",
+    fontSize: 13,
   },
 });

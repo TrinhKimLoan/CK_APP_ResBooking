@@ -22,19 +22,19 @@ export default function HomeScreen() {
       id: 1,
       name: "Bàn B3 - Tầng 2",
       desc: "Bàn 4 người",
-      image: "https://i.imgur.com/tVv8a7X.jpeg",
+      image: "https://static.vinwonders.com/production/2025/02/tong-hop-cac-nha-hang-view-dep-o-tphcm.jpg",
     },
     {
       id: 2,
       name: "Bàn B7 - Tầng 3",
       desc: "Bàn 6 người",
-      image: "https://i.imgur.com/tVv8a7X.jpeg",
+      image: "https://gofood.vn/upload/r/tong-hop-tin-tuc/kinh-nghiem-meo-hay/nha-hang-the-deck.jpg",
     },
     {
       id: 3,
       name: "Bàn B5",
       desc: "Bàn 2 người",
-      image: "https://i.imgur.com/tVv8a7X.jpeg",
+      image: "https://digiticket.vn/blog/wp-content/uploads/2021/04/nha-hang-view-dep-ho-tay-10.jpg",
     },
   ];
 
@@ -59,7 +59,7 @@ export default function HomeScreen() {
       {/* Banner */}
       <Image
         style={styles.banner}
-        source={{ uri: "https://i.imgur.com/efQvJkW.jpeg" }}
+        source={{ uri: "https://treobangron.com.vn/wp-content/uploads/2022/12/banner-quang-cao-nha-hang-32.jpg" }}
       />
 
       <View style={styles.bannerContent}>
