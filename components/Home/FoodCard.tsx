@@ -18,9 +18,10 @@ export default function FoodCard({ item }: any) {
       <Image source={imageSource} style={styles.image} resizeMode="cover" />
 
       <View style={{ flex: 1, marginLeft: 10 }}>
-        <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
+        <Text style={styles.name}>{item.name}</Text>
+
         <Text style={styles.price}>
-          {Number(item.price).toLocaleString("vi-VN")} VND
+          Giá: {Number(item.price).toLocaleString("vi-VN")} VND
         </Text>
       </View>
     </TouchableOpacity>
@@ -34,13 +35,26 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 12,
     marginBottom: 12,
+    width: 250,
   },
+
   image: {
     width: 90,
     height: 90,
     borderRadius: 10,
     backgroundColor: "#eee",
   },
-  name: { fontSize: 16, fontWeight: "600" },
-  price: { marginTop: 4, fontSize: 14, color: "#444" },
+
+  name: {
+    fontSize: 16,
+    fontWeight: "600",
+    flexWrap: "wrap",
+    width: "100%",
+  },
+
+  price: {
+    marginTop: 4,
+    fontSize: 14,
+    color: "#444",
+  },
 });

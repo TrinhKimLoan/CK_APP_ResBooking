@@ -96,8 +96,6 @@ export default function MenuModal({
   const uploadImage = async (asset: ImagePickerAsset) => {
     try {
       setUploading(true);
-
-      // Lấy extension: ưu tiên fileName, fallback mimeType, cuối cùng "jpg"
       let ext = "jpg";
 
       if (asset.fileName && asset.fileName.includes(".")) {
@@ -108,12 +106,11 @@ export default function MenuModal({
 
       const fileName = `menu_${Date.now()}.${ext}`;
 
-      // fetch uri → arrayBuffer
       const response = await fetch(asset.uri);
       const arrayBuffer = await response.arrayBuffer();
 
       const { error: uploadError } = await supabase.storage
-        .from("menu-images") // tên bucket BE tạo
+        .from("menu-images") 
         .upload(fileName, arrayBuffer, {
           contentType: asset.mimeType || "image/jpeg",
           upsert: false,
@@ -152,10 +149,12 @@ export default function MenuModal({
       Alert.alert("Thiếu thông tin", "Tên và giá là bắt buộc!");
       return;
     }
-
-    // Không bắt buộc có img. Nếu img rỗng, MenuCard sẽ tự dùng ảnh mặc định.
     onSubmit(form);
   };
+const formatNumber = (value: string) => {
+  return value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
@@ -165,20 +164,31 @@ export default function MenuModal({
             {defaultValue ? "Sửa món ăn" : "Thêm món ăn mới"}
           </Text>
 
-          <TextInput
-            style={styles.input}
+         <TextInput
+            style={[styles.input, styles.nameInput]}
             placeholder="Tên món ăn"
+            multiline
             value={form.name}
             onChangeText={(t) => setForm({ ...form, name: t })}
           />
 
+
+        <View style={styles.priceRow}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, styles.priceInput]}
             placeholder="Giá"
             keyboardType="numeric"
-            value={form.price}
-            onChangeText={(t) => setForm({ ...form, price: t })}
+            value={formatNumber(form.price)}
+            onChangeText={(t) => {
+              const raw = t.replace(/\./g, "");
+              setForm({ ...form, price: raw });
+            }}
           />
+
+          <Text style={styles.vndLabel}>VND</Text>
+        </View>
+
+
 
           <TextInput
             style={[styles.input, { height: 80 }]}
@@ -231,6 +241,12 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 12,
   },
+  nameInput: {
+  minHeight: 45,
+  maxHeight: 100,
+  textAlignVertical: "top",  
+},
+
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 15 },
   input: {
     borderWidth: 1,
@@ -239,6 +255,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
   },
+  priceRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginBottom: 12,
+},
+
+priceInput: {
+  flex: 1,             
+  marginRight: 10,     
+},
+
+vndLabel: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "red",
+},
+
   uploadBtn: {
     padding: 12,
     backgroundColor: "#007AFF",

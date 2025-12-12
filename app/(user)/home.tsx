@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   ScrollView,
   View,
@@ -6,6 +6,7 @@ import {
   Image,
   ActivityIndicator,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { supabase } from "@/lib/supabase";
 import FoodCard from "@/components/Home/FoodCard";
@@ -22,7 +23,8 @@ export default function HomeScreen() {
       id: 1,
       name: "Bàn B3 - Tầng 2",
       desc: "Bàn 4 người",
-      image: "https://static.vinwonders.com/production/2025/02/tong-hop-cac-nha-hang-view-dep-o-tphcm.jpg",
+      image:
+        "https://static.vinwonders.com/production/2025/02/tong-hop-cac-nha-hang-view-dep-o-tphcm.jpg",
     },
     {
       id: 2,
@@ -36,8 +38,46 @@ export default function HomeScreen() {
       desc: "Bàn 2 người",
       image: "https://digiticket.vn/blog/wp-content/uploads/2021/04/nha-hang-view-dep-ho-tay-10.jpg",
     },
+    {
+      id: 4,
+      name: "Bàn B5 - Tầng 1",
+      desc: "Bàn 3 người",
+      image: "https://cdn.xanhsm.com/2025/01/ad86b5e4-nha-hang-quan-1-view-dep-6.jpg",
+    },
+    {
+      id: 5,
+      name: "Bàn b6 - Tầng 1",
+      desc: "Bàn 6 người",
+      image: "https://skylightnhatrang.com/wp-content/uploads/2024/08/nha-hang-view-dep-o-nha-trang-8.jpg",
+    },
+    {
+      id: 6,
+      name: "Bàn b3 - Tầng 2",
+      desc: "Bàn 2 người",
+      image: "https://digiticket.vn/blog/wp-content/uploads/2021/04/nha-hang-view-dep-ho-tay-10.jpg",
+    },
   ];
 
+  // ⭐ Slideshow logic
+  const [slideIndex, setSlideIndex] = useState(0);
+  const scrollRef = useRef<any>(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const nextIndex = (slideIndex + 1) % seats.length;
+
+      scrollRef.current?.scrollTo({
+        x: nextIndex * 170, // width 150 + marginRight 12
+        animated: true,
+      });
+
+      setSlideIndex(nextIndex);
+    }, 1500);
+
+    return () => clearInterval(timer);
+  }, [slideIndex]);
+
+  // ⭐ Load menu ăn
   useEffect(() => {
     loadFoods();
   }, []);
@@ -50,7 +90,7 @@ export default function HomeScreen() {
       return;
     }
 
-    setFoods((data || []).slice(0, 5)); // chỉ lấy 5 món đầu
+    setFoods((data || []).slice(0, 5)); // lấy 5 món đầu
     setLoading(false);
   }
 
@@ -76,15 +116,42 @@ export default function HomeScreen() {
         </View>
       </Link>
 
-      {/* Chỗ ngồi nổi bật */}
+      {/* ⭐ CHỖ NGỒI NỔI BẬT — SLIDESHOW */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Chỗ ngồi nổi bật</Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {seats.map((seat) => (
-            <SeatCard key={seat.id} item={seat} />
-          ))}
-        </ScrollView>
+        <View>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            ref={scrollRef}
+            onScroll={(e) => {
+              const index = Math.round(
+                e.nativeEvent.contentOffset.x / 170
+              );
+              setSlideIndex(index);
+            }}
+            scrollEventThrottle={16}
+          >
+            {seats.map((seat) => (
+              <SeatCard key={seat.id} item={seat} />
+            ))}
+          </ScrollView>
+
+          {/* Indicator */}
+          <View style={styles.dotsContainer}>
+            {seats.map((_, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.dot,
+                  slideIndex === i && styles.dotActive,
+                ]}
+              />
+            ))}
+          </View>
+        </View>
       </View>
 
       {/* Món ăn */}
@@ -135,43 +202,64 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  banner: { width: "100%", height: 220 },
-  bannerContent: { padding: 16 },
+  banner: {
+    width: "100%",
+    height: 220,
+  },
+  bannerContent: {
+    padding: 16,
+  },
   title: { fontSize: 20, fontWeight: "700" },
   subtitle: { marginTop: 4, color: "#555" },
+
   section: { marginTop: 20, paddingLeft: 16 },
   sectionTitle: { fontSize: 18, fontWeight: "600" },
+
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 8,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 50,
+    backgroundColor: "#ccc",
+    marginHorizontal: 4,
+  },
+  dotActive: {
+    backgroundColor: "#666",
+  },
+
   sectionHeader: {
     marginTop: 20,
     paddingHorizontal: 16,
     flexDirection: "row",
     justifyContent: "space-between",
   },
+
   bookBtn: {
-    marginTop: 12,
     backgroundColor: "#f59e0b",
     paddingVertical: 12,
-    paddingHorizontal: 20,
     borderRadius: 10,
-    alignSelf: "center",
+    marginHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   bookBtnText: {
     color: "#fff",
     fontSize: 15,
     fontWeight: "600",
   },
+
   aboutBox: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f5bd5c",
     margin: 16,
     padding: 16,
     borderRadius: 12,
   },
   aboutTitle: { fontSize: 18, fontWeight: "700", marginBottom: 8 },
   aboutDesc: { fontSize: 14, color: "#555", marginBottom: 12 },
-  aboutRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
+  aboutRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
   aboutText: { marginLeft: 8, fontSize: 15, color: "#333" },
 });

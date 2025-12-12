@@ -1,4 +1,4 @@
-// components/MenuCard.tsx
+import { router } from "expo-router";
 import React from "react";
 import {
   View,
@@ -6,12 +6,9 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  Switch,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-// ẢNH MẶC ĐỊNH (nhớ để đúng path với file em đã tạo)
-// Nếu em đặt tên khác, ví dụ default_food.jpg thì sửa lại require(...)
 const defaultDishImage = require("@/assets/app/default_food.png");
 
 type MenuItem = {
@@ -34,36 +31,40 @@ export default function MenuCard({
   item,
   onEdit,
   onDelete,
-  onToggle,
 }: MenuCardProps) {
-  // nếu không có img → dùng ảnh mặc định
   const imageSource = item.img
     ? { uri: item.img }
     : defaultDishImage;
 
-    const formatPrice = (value: number) => {
-  return value.toLocaleString("vi-VN");
-};
+  const formatPrice = (value: number) => {
+    return value.toLocaleString("vi-VN");
+  };
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      onPress={() => router.push(`/detail_food?id=${item.id}&role=admin`)}
+    >
       <Image source={imageSource} style={styles.img} />
 
       <View style={{ flex: 1 }}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text 
-        style={styles.desc}
-        numberOfLines={2}
-        ellipsizeMode="tail">Mô tả: {item.description}</Text>
-        <Text style={styles.price}>{formatPrice(item.price)} VND</Text>
 
+        <Text
+          style={styles.desc}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          Mô tả: {item.description}
+        </Text>
+
+        <Text style={styles.price}>
+          {formatPrice(item.price)} VND
+        </Text>
 
         <View style={styles.row}>
-          <Switch
-            value={!!item.active}
-            onValueChange={() => onToggle(item)}
-          />
-
+          
           <TouchableOpacity onPress={() => onEdit(item)}>
             <Ionicons name="create-outline" size={22} color="#007AFF" />
           </TouchableOpacity>
@@ -73,7 +74,7 @@ export default function MenuCard({
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -96,8 +97,9 @@ const styles = StyleSheet.create({
   row: {
     marginTop: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     paddingRight: 10,
     alignItems: "center",
+    gap: 20,
   },
 });

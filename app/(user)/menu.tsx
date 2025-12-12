@@ -38,104 +38,128 @@ export default function MenuScreen() {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Thực đơn</Text>
+    <View style={styles.container}>
+      
+      {/* ⭐ GIỐNG ADMIN */}
+      <Text style={styles.title}>Thực Đơn</Text>
 
       <TextInput
-        placeholder="🔍 Tìm món..."
+        placeholder="Tìm kiếm món ăn..."
         style={styles.search}
         value={search}
         onChangeText={setSearch}
       />
 
-      {loading ? (
-        <ActivityIndicator size="large" style={{ marginTop: 20 }} />
-      ) : filteredMenu.length === 0 ? (
-        <Text style={styles.empty}>Không có món nào phù hợp.</Text>
-      ) : (
-        filteredMenu.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.card}
-            activeOpacity={0.85}
-            onPress={() =>
-              router.push({
-                pathname: "/detail_food",
-                params: { id: item.id },
-              })
-            }
-          >
-            <Image
-              source={
-                item.img?.startsWith("http")
-                  ? { uri: item.img }
-                  : require("@/assets/app/default_food.png")
+      <ScrollView style={styles.list}>
+        {loading ? (
+          <ActivityIndicator size="large" />
+        ) : filteredMenu.length === 0 ? (
+          <Text style={styles.empty}>Không có món nào phù hợp.</Text>
+        ) : (
+          filteredMenu.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              activeOpacity={0.9}
+              onPress={() =>
+                router.push({
+                  pathname: "/detail_food",
+                  params: { id: item.id },
+                })
               }
-              style={styles.image}
-            />
+            >
+              <Image
+                source={
+                  item.img?.startsWith("http")
+                    ? { uri: item.img }
+                    : require("@/assets/app/default_food.png")
+                }
+                style={styles.image}
+              />
 
-            <View style={{ flex: 1 }}>
-              <Text style={styles.name}>{item.name}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.name}>{item.name}</Text>
 
-              <Text style={styles.price}>
-                {Number(item.price).toLocaleString("vi-VN")} đ
-              </Text>
-
-              {item.description ? (
-                <Text style={styles.desc} numberOfLines={2}>
-                  {item.description}
+                <Text style={styles.price}>
+                  Giá tiền: {Number(item.price).toLocaleString("vi-VN")} đ
                 </Text>
-              ) : null}
-            </View>
-          </TouchableOpacity>
-        ))
-      )}
-    </ScrollView>
+
+                {item.description ? (
+                  <Text style={styles.desc} numberOfLines={2}>
+                    {item.description}
+                  </Text>
+                ) : null}
+              </View>
+            </TouchableOpacity>
+          ))
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: "#fff", flex: 1 },
-  title: { fontSize: 24, fontWeight: "700", marginBottom: 12 },
+  container: {
+    flex: 1,
+    padding: 20,
+    marginTop: 30,
+    backgroundColor: "#fff",
+  },
+
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+
   search: {
-    backgroundColor: "#f0f0f0",
+    borderWidth: 1,
+    borderColor: "#ddd",
     padding: 12,
-    borderRadius: 12,
-    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: "#f5f5f5",
+    marginBottom: 15,      
     fontSize: 15,
   },
+
+  list: {
+    marginTop: 5,
+  },
+
   empty: {
     marginTop: 20,
     textAlign: "center",
     fontSize: 16,
     color: "#777",
   },
-
-  /* CARD HIỂN THỊ 1 DÒNG */
   card: {
     flexDirection: "row",
     backgroundColor: "#fff",
     padding: 12,
     borderRadius: 12,
-    marginBottom: 14,
-    elevation: 2,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#eee",
+
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.06,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    elevation: 2,
+
     gap: 12,
   },
 
   image: {
     width: 90,
     height: 90,
-    borderRadius: 12,
+    borderRadius: 10,
     backgroundColor: "#eee",
   },
+
   name: { fontSize: 16, fontWeight: "600", marginBottom: 4 },
-  price: { fontSize: 15, fontWeight: "700", color: "#e63946" },
-  desc: {
-    marginTop: 6,
-    fontSize: 13,
-    color: "#777",
-  },
+
+  price: { fontSize: 15, fontWeight: "700", color: "#d97900" },
+
+  desc: { marginTop: 4, fontSize: 13, color: "#777" },
 });
