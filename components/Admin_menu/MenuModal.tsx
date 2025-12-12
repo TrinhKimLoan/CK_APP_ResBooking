@@ -1,4 +1,3 @@
-// components/MenuModal.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -17,9 +16,9 @@ import { supabase } from "@/lib/supabase";
 
 type MenuForm = {
   name: string;
-  price: string; // dùng string cho TextInput
+  price: string;
   description: string;
-  img: string;   // URL ảnh (nếu có)
+  img: string;
 };
 
 type MenuModalProps = {
@@ -49,7 +48,6 @@ export default function MenuModal({
 
   const [uploading, setUploading] = useState(false);
 
-  // Khi mở modal sửa → fill dữ liệu vào form
   useEffect(() => {
     if (defaultValue) {
       setForm({
@@ -130,7 +128,6 @@ export default function MenuModal({
         throw new Error("Không lấy được URL ảnh sau khi upload.");
       }
 
-      // Cập nhật vào form để preview + lưu DB
       setForm((prev) => ({ ...prev, img: data.publicUrl }));
     } catch (err: any) {
       console.log("Upload exception:", err);

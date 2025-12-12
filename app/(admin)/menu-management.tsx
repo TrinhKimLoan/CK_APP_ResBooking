@@ -19,25 +19,23 @@ export default function AdminMenuScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editItem, setEditItem] = useState(null);
 
-  // 🟦 Load danh sách từ DB
+  // Load danh sách từ DB
   const fetchMenu = async () => {
     const { data } = await supabase.from("menu").select("*").order("id");
     setMenu(data || []);
   };
 
-  // ⭐ Load lần đầu
   useEffect(() => {
     fetchMenu();
   }, []);
 
-  // ⭐ Load lại khi quay lại screen (fix lỗi card còn dù đã xoá)
   useFocusEffect(
     useCallback(() => {
       fetchMenu();
     }, [])
   );
 
-  // 🟦 Thêm hoặc sửa món
+  // Thêm hoặc sửa món
   const addOrUpdate = async (form: any) => {
     if (editItem) {
       await supabase.from("menu").update(form).eq("id", editItem.id);
@@ -50,7 +48,7 @@ export default function AdminMenuScreen() {
     fetchMenu();
   };
 
-  // 🟦 Xóa có confirm
+  // Xóa có confirm
   const handleDelete = (id: number) => {
     Alert.alert(
       "Xác nhận xoá",
@@ -72,20 +70,12 @@ export default function AdminMenuScreen() {
       Alert.alert("Lỗi xoá", error.message);
       return;
     }
-
-    // Xóa ngay trên UI để phản hồi nhanh
     setMenu((prev) => prev.filter((item) => item.id !== id));
 
     Alert.alert("Thành công", "Đã xoá món ăn.");
   };
 
-  // 🟦 Bật / tắt món
-  const toggleActive = async (item: any) => {
-    await supabase.from("menu").update({ active: !item.active }).eq("id", item.id);
-    fetchMenu();
-  };
-
-  // 🟦 Lọc theo tìm kiếm
+  // Lọc theo tìm kiếm
   const filtered = menu.filter((m) =>
     m.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -123,7 +113,6 @@ export default function AdminMenuScreen() {
               setModalVisible(true);
             }}
             onDelete={handleDelete}
-            onToggle={toggleActive}
           />
         ))}
       </ScrollView>

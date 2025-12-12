@@ -67,7 +67,7 @@ export default function HomeScreen() {
       const nextIndex = (slideIndex + 1) % seats.length;
 
       scrollRef.current?.scrollTo({
-        x: nextIndex * 170, // width 150 + marginRight 12
+        x: nextIndex * 170, 
         animated: true,
       });
 
@@ -77,7 +77,6 @@ export default function HomeScreen() {
     return () => clearInterval(timer);
   }, [slideIndex]);
 
-  // ⭐ Load menu ăn
   useEffect(() => {
     loadFoods();
   }, []);
@@ -90,7 +89,7 @@ export default function HomeScreen() {
       return;
     }
 
-    setFoods((data || []).slice(0, 5)); // lấy 5 món đầu
+    setFoods((data || []).slice(0, 5)); 
     setLoading(false);
   }
 
@@ -116,7 +115,7 @@ export default function HomeScreen() {
         </View>
       </Link>
 
-      {/* ⭐ CHỖ NGỒI NỔI BẬT — SLIDESHOW */}
+      {/* CHỖ NGỒI NỔI BẬT */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Chỗ ngồi nổi bật</Text>
 
