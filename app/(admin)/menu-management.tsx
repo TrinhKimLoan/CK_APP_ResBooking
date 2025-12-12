@@ -35,18 +35,38 @@ export default function AdminMenuScreen() {
     }, [])
   );
 
-  // Thêm hoặc sửa món
-  const addOrUpdate = async (form: any) => {
-    if (editItem) {
-      await supabase.from("menu").update(form).eq("id", editItem.id);
-    } else {
-      await supabase.from("menu").insert([form]);
+ 
+ // Thêm hoặc sửa món
+const addOrUpdate = async (form: any) => {
+  if (editItem) {
+    // Sửa món
+    const { error } = await supabase
+      .from("menu")
+      .update(form)
+      .eq("id", editItem.id);
+
+    if (error) {
+      Alert.alert("Lỗi", "Không thể cập nhật món ăn!");
+      return;
     }
 
-    setModalVisible(false);
-    setEditItem(null);
-    fetchMenu();
-  };
+    Alert.alert("Thành công", "Cập nhật món ăn thành công!");
+  } else {
+    // Thêm món mới
+    const { error } = await supabase.from("menu").insert([form]);
+
+    if (error) {
+      Alert.alert("Lỗi", "Không thể thêm món ăn!");
+      return;
+    }
+
+    Alert.alert("Thành công", "Thêm món ăn thành công!");
+  }
+
+  setModalVisible(false);
+  setEditItem(null);
+  fetchMenu(); // reload danh sách
+};
 
   // Xóa có confirm
   const handleDelete = (id: number) => {
@@ -113,6 +133,7 @@ export default function AdminMenuScreen() {
               setModalVisible(true);
             }}
             onDelete={handleDelete}
+
           />
         ))}
       </ScrollView>

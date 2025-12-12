@@ -86,7 +86,7 @@ export default function DetailFood() {
         </View>
       </ScrollView>
 
-      {/* ⭐ NÚT DÀNH CHO ADMIN */}
+      {/* sửa và xóa cho admin */}
       {isAdmin && (
         <View style={styles.adminActions}>
           <TouchableOpacity
@@ -148,19 +148,28 @@ export default function DetailFood() {
           img: item.img,
         }}
         onSubmit={async (form) => {
-          await supabase
-            .from("menu")
-            .update({
-              name: form.name,
-              price: Number(form.price),
-              description: form.description,
-              img: form.img,
-            })
-            .eq("id", item.id);
+        const { error } = await supabase
+          .from("menu")
+          .update({
+            name: form.name,
+            price: Number(form.price),
+            description: form.description,
+            img: form.img,
+          })
+          .eq("id", item.id);
 
-          setShowEdit(false);
-          fetchDetail(item.id);
-        }}
+        if (error) {
+          Alert.alert("Lỗi", "Không thể cập nhật món ăn!");
+          return;
+        }
+
+        setShowEdit(false);
+
+        Alert.alert("Thành công", "Đã lưu thay đổi món ăn!");
+
+        fetchDetail(item.id); // load lại dữ liệu
+      }}
+
       />
     </View>
   );

@@ -24,7 +24,6 @@ type MenuCardProps = {
   item: MenuItem;
   onEdit: (item: MenuItem) => void;
   onDelete: (id: number) => void;
-  onToggle: (item: MenuItem) => void;
 };
 
 export default function MenuCard({
