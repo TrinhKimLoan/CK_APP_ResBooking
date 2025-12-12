@@ -41,14 +41,22 @@ export default function MenuCard({
     ? { uri: item.img }
     : defaultDishImage;
 
+    const formatPrice = (value: number) => {
+  return value.toLocaleString("vi-VN");
+};
+
   return (
     <View style={styles.card}>
       <Image source={imageSource} style={styles.img} />
 
       <View style={{ flex: 1 }}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.desc}>Mô tả: {item.description}</Text>
-        <Text style={styles.price}>{item.price} VND</Text>
+        <Text 
+        style={styles.desc}
+        numberOfLines={2}
+        ellipsizeMode="tail">Mô tả: {item.description}</Text>
+        <Text style={styles.price}>{formatPrice(item.price)} VND</Text>
+
 
         <View style={styles.row}>
           <Switch
