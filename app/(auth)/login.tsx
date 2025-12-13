@@ -45,9 +45,9 @@ export default function LoginScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Text style={styles.appName}>Tên App</Text>
+      <Text style={styles.appName}>Reserva</Text>
       <Text style={styles.title}>Đăng nhập</Text>
-      <Text style={styles.welcome}>Chào mừng bạn đến với app “Tên App”!</Text>
+      <Text style={styles.welcome}>Chào mừng bạn đến với app Reserva!</Text>
 
       <Text style={styles.label}>Email</Text>
       <TextInput
