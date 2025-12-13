@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "../../context/auth";
-import { useRouter } from "expo-router";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '../../context/auth';
+import { useRouter } from 'expo-router';
+import { Colors, Fonts } from '@/constants/theme';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("user1@gmail.com");
-  const [password, setPassword] = useState("123456");
-  const [loading, setLoading] = useState(false);
-  const { user, role } = useAuth();
   const router = useRouter();
+  const { user, role } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Tự động điều hướng nếu đã login
+  // Auto redirect nếu đã login
   useEffect(() => {
     if (user && role) {
-      console.log("Auto-redirect from login:", role);
-      if (role === "admin") {
-        router.replace("/(admin)/dashboard");
+      if (role === 'admin') {
+        router.replace('/(admin)/dashboard');
       } else {
-        router.replace("/(user)/home");
+        router.replace('/(user)/home');
       }
     }
   }, [user, role]);
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin.');
       return;
     }
 
     setLoading(true);
-    console.log("Attempting login with:", email);
 
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim().toLowerCase(),
@@ -38,71 +37,78 @@ export default function LoginScreen() {
     });
 
     if (error) {
-      Alert.alert("Login failed", error.message);
-    } else {
-      console.log("Login successful, waiting for auth state update...");
-      // AuthContext sẽ tự động cập nhật và useEffect trên sẽ xử lý điều hướng
+      Alert.alert('Đăng nhập thất bại', error.message);
     }
 
     setLoading(false);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Text style={styles.appName}>Tên App</Text>
+      <Text style={styles.title}>Đăng nhập</Text>
+      <Text style={styles.welcome}>Chào mừng bạn đến với app “Tên App”!</Text>
 
       <Text style={styles.label}>Email</Text>
       <TextInput
+        style={styles.input}
         value={email}
         onChangeText={setEmail}
-        autoCapitalize="none"
+        placeholder="Nhập email của bạn"
         keyboardType="email-address"
-        style={styles.input}
-        placeholder="Enter your email"
+        autoCapitalize="none"
       />
 
-      <Text style={styles.label}>Password</Text>
+      <Text style={styles.label}>Mật khẩu</Text>
       <TextInput
+        style={styles.input}
         value={password}
         onChangeText={setPassword}
+        placeholder="Nhập mật khẩu"
         secureTextEntry
-        style={styles.input}
-        placeholder="Enter your password"
       />
 
-      <Button
-        title={loading ? "Signing in..." : "Sign in"}
+      {/* Nút Đăng nhập */}
+      <TouchableOpacity
+        style={styles.loginButton}
         onPress={handleLogin}
         disabled={loading}
-      />
-    </View>
+      >
+        <Text style={styles.loginButtonText}>
+          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Nút Đăng ký ngay */}
+      <View style={styles.registerContainer}>
+        <Text>Bạn chưa có tài khoản? </Text>
+        <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+          <Text style={styles.registerText}>Đăng ký ngay</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    justifyContent: "center", 
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: { 
-    fontSize: 24, 
-    fontWeight: 'bold',
-    marginBottom: 30, 
-    textAlign: "center" 
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: '500',
-  },
-  input: { 
-    borderWidth: 1, 
-    borderColor: "#ddd", 
-    padding: 12, 
-    marginBottom: 16, 
+  container: { flexGrow: 1, justifyContent: 'center', padding: 20, backgroundColor: Colors.light.background },
+  appName: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, fontFamily: Fonts.sans },
+  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, fontFamily: Fonts.sans },
+  welcome: { fontSize: 16, textAlign: 'center', marginBottom: 30, fontFamily: Fonts.sans },
+  label: { fontSize: 16, marginBottom: 5, fontWeight: '500', fontFamily: Fonts.sans },
+  input: { borderWidth: 1, borderColor: '#ddd', padding: 12, marginBottom: 16, borderRadius: 8, fontSize: 16, fontFamily: Fonts.sans },
+  loginButton: {
+    backgroundColor: Colors.light.tint,
+    paddingVertical: 14,
     borderRadius: 8,
-    fontSize: 16,
+    alignItems: 'center',
+    marginBottom: 20,
   },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  registerContainer: { flexDirection: 'row', justifyContent: 'center' },
+  registerText: { color: Colors.light.tint, fontWeight: 'bold' },
 });
