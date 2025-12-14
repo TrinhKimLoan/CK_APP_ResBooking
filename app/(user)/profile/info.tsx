@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: Fonts.sans,
     marginBottom: 5,
+    fontWeight: 'bold'
   },
   input: {
     borderWidth: 1,
