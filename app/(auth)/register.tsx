@@ -54,6 +54,7 @@ export default function RegisterScreen() {
         { redirectTo: 'http://localhost' } // tránh auto-login
       );
 
+
       if (error) throw error;
 
       // Clear session nếu Supabase vẫn tự login
@@ -70,9 +71,9 @@ export default function RegisterScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Text style={styles.appName}>Tên App</Text>
+      <Text style={styles.appName}>Reserva</Text>
       <Text style={styles.title}>Đăng ký</Text>
-      <Text style={styles.welcome}>Chào mừng bạn đến với app “Tên App”!</Text>
+      <Text style={styles.welcome}>Chào mừng bạn đến với app Reserva!</Text>
 
       <Text style={styles.label}>Tên tài khoản</Text>
       <TextInput
@@ -150,23 +151,72 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, justifyContent: 'center', padding: 20, backgroundColor: Colors.light.background },
-  appName: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, fontFamily: Fonts.sans },
-  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 10, fontFamily: Fonts.sans },
-  welcome: { fontSize: 16, textAlign: 'center', marginBottom: 30, fontFamily: Fonts.sans },
-  label: { fontSize: 16, marginBottom: 5, fontWeight: '500', fontFamily: Fonts.sans },
-  input: { borderWidth: 1, borderColor: '#ddd', padding: 12, marginBottom: 16, borderRadius: 8, fontSize: 16, fontFamily: Fonts.sans },
+  container: { 
+    flexGrow: 1, 
+    justifyContent: 'center', 
+    padding: 20, 
+    backgroundColor: Colors.light.background 
+  },
+  appName: { 
+    fontSize: 28, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    marginBottom: 10, 
+    fontFamily: Fonts.sans 
+  },
+  title: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    marginBottom: 10, 
+    fontFamily: Fonts.sans 
+  },
+  welcome: { 
+    fontSize: 16, 
+    textAlign: 'center', 
+    marginBottom: 30, 
+    fontFamily: Fonts.sans 
+  },
+  label: { 
+    fontSize: 16, 
+    marginBottom: 5, 
+    fontWeight: '500', 
+    fontFamily: Fonts.sans 
+  },
+  input: { 
+    borderWidth: 1, 
+    borderColor: '#ddd', 
+    padding: 12, 
+    marginBottom: 16, 
+    borderRadius: 8, 
+    fontSize: 16, 
+    fontFamily: Fonts.sans 
+  },
   loginButton: {
-    backgroundColor: Colors.light.tint,
+    backgroundColor: '#f59e0b',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 20,
   },
-  loginButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  registerContainer: { flexDirection: 'row', justifyContent: 'center' },
-  registerText: { color: Colors.light.tint, fontWeight: 'bold' },
-  checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  loginButtonText: { 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: 'bold' 
+  },
+  registerContainer: { 
+    flexDirection: 'row', 
+    justifyContent: 'center' 
+  },
+  registerText: { 
+    color: '#f59e0b', 
+    fontWeight: 'bold' 
+  },
+  checkboxContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 16 
+  },
   checkbox: {
     width: 20,
     height: 20,
@@ -177,6 +227,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tick: { fontSize: 16, color: Colors.light.tint, fontWeight: 'bold' },
-  checkboxLabel: { fontSize: 14, fontFamily: Fonts.sans, flex: 1, flexWrap: 'wrap' },
+  tick: { 
+    fontSize: 16, 
+    color: '#f59e0b', 
+    fontWeight: 'bold' 
+  },
+  checkboxLabel: { 
+    fontSize: 14, 
+    fontFamily: Fonts.sans, 
+    flex: 1, 
+    flexWrap: 'wrap' 
+  },
 });
