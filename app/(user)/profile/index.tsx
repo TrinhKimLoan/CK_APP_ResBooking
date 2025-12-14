@@ -162,11 +162,15 @@ export default function ProfileScreen() {
           onPress={() => router.push('/(user)/profile/info')}
         />
         <ProfileItem
+          label="Đổi mật khẩu"
+          onPress={() => router.push('/(user)/profile/change-password')}
+        />
+        <ProfileItem
           label="Trung tâm trợ giúp"
           onPress={() => router.push('/(user)/profile/help-center')}
         />
         <ProfileItem
-          label="Điều khoản & chính sách"
+          label="Điều khoản & chính sách bảo mật"
           onPress={() => router.push('/(user)/profile/privacy-policy')}
         />
       </View>

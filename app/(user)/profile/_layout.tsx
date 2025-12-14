@@ -22,6 +22,10 @@ export default function ProfileLayout() {
         name="privacy-policy"
         options={{ title: 'Điều khoản & chính sách' }}
       />
+      <Stack.Screen
+        name="change-password"
+        options={{ title: 'Đổi mật khẩu' }}
+    />
     </Stack>
   );
 }

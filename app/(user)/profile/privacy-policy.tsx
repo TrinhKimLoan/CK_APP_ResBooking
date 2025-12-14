@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.sans,
     fontWeight: 'bold',
     fontSize: 16,
-    marginTop: 15,
     marginBottom: 5,
   },
   text: {

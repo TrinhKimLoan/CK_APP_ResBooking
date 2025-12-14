@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/auth';
@@ -9,13 +9,16 @@ export default function ProfileInfoScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!user) return;
+
       const { data } = await supabase
         .from('user_profile')
         .select('*')
-        .eq('id', user?.id)
+        .eq('id', user.id)
         .single();
 
       if (data) {
@@ -26,16 +29,25 @@ export default function ProfileInfoScreen() {
     };
 
     fetchProfile();
-  }, []);
+  }, [user]);
 
   const handleSave = async () => {
-    await supabase.rpc('user_update_profile', {
-      p_full_name: name,
-      p_email: email,
-      p_phone: phone,
-    });
+    if (!user) return;
 
-    Alert.alert('Thành công', 'Cập nhật thông tin thành công');
+    setLoading(true);
+    try {
+      await supabase.rpc('user_update_profile', {
+        p_full_name: name,
+        p_email: email,
+        p_phone: phone,
+      });
+
+      Alert.alert('Thành công', 'Cập nhật thông tin thành công');
+    } catch (error: any) {
+      Alert.alert('Lỗi', error.message || 'Cập nhật thất bại');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -48,9 +60,25 @@ export default function ProfileInfoScreen() {
           text: 'Xóa',
           style: 'destructive',
           onPress: async () => {
-            // NOTE: nếu bị chặn permission → hỏi Loan
-            await supabase.auth.signOut();
-            signOut();
+            if (!user) return;
+
+            setLoading(true);
+            try {
+              // 1. Xóa row trong bảng user_profile
+              await supabase.from('user_profile').delete().eq('id', user.id);
+
+              // 2. Xóa user khỏi Supabase Auth
+              await supabase.auth.admin.deleteUser(user.id); // cần key admin hoặc gọi function RPC ở backend
+
+              // 3. Logout khỏi app
+              signOut();
+
+              Alert.alert('Thành công', 'Tài khoản đã được xóa');
+            } catch (error: any) {
+              Alert.alert('Lỗi', error.message || 'Xóa tài khoản thất bại');
+            } finally {
+              setLoading(false);
+            }
           },
         },
       ]
@@ -58,7 +86,7 @@ export default function ProfileInfoScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Text style={styles.label}>Tên tài khoản</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} />
 
@@ -68,27 +96,28 @@ export default function ProfileInfoScreen() {
       <Text style={styles.label}>Số điện thoại</Text>
       <TextInput style={styles.input} value={phone} onChangeText={setPhone} />
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveText}>Lưu thông tin</Text>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
+        <Text style={styles.saveText}>{loading ? 'Đang lưu...' : 'Lưu thông tin'}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleDeleteAccount}>
+      <TouchableOpacity onPress={handleDeleteAccount} disabled={loading}>
         <Text style={styles.deleteText}>Xóa tài khoản</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: Colors.light.background,
     padding: 20,
   },
   label: {
     fontFamily: Fonts.sans,
     marginBottom: 5,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   input: {
     borderWidth: 1,
@@ -96,10 +125,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 15,
+    fontSize: 15,
+    fontFamily: Fonts.sans,
   },
   saveButton: {
     backgroundColor: '#f59e0b',
-    padding: 14,
+    paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 20,
@@ -107,9 +138,13 @@ const styles = StyleSheet.create({
   saveText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: Fonts.sans,
   },
   deleteText: {
     color: 'red',
     textAlign: 'center',
+    fontSize: 15,
+    fontFamily: Fonts.sans,
   },
 });
