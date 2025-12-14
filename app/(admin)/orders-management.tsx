@@ -1,27 +1,63 @@
 import { useAuth } from '@/context/auth';
 import { supabase } from '@/lib/supabase';
 import type { Order, Table, UserProfile } from '@/types/database';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    RefreshControl,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
-const STATUS_BADGE: Record<string, { label: string; background: string; color: string }> = {
-  CHO: { label: 'Chờ bàn', background: '#FFF4E5', color: '#C88000' },
-  DA_XAC_NHAN: { label: 'Đã duyệt', background: '#E6F4FF', color: '#0B5ED7' },
-  DA_CHECKIN: { label: 'Đang sử dụng', background: '#E6FFF3', color: '#13795B' },
-  DA_THANH_TOAN: { label: 'Đã hoàn tất', background: '#F1F1F1', color: '#555555' },
-  DA_TU_CHOI: { label: 'Đã từ chối', background: '#FDE8E8', color: '#C23321' },
+type OrderStatus = 'pending' | 'approved' | 'declined';
+
+type OrderRecord = Omit<Order, 'status'> & { status?: string | null };
+
+// Chuẩn hóa trạng thái lấy từ DB để tránh lỗi khi dữ liệu không đồng nhất
+const normalizeOrderStatus = (status?: string | null): OrderStatus => {
+  const value = (status ?? '').trim().toLowerCase();
+  if (value === 'approved' || value === 'declined') return value;
+  return 'pending';
+};
+
+const buildLocalDateTime = (dateValue?: string | null, timeValue?: string | null): Date | null => {
+  if (!dateValue) return null;
+
+  const [y, m, d] = dateValue.split('-').map((part) => Number.parseInt(part, 10));
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+
+  const parseTimePart = (value?: string) => {
+    const normalized = (value ?? '').trim();
+    if (!normalized) return 0;
+    const parsed = Number.parseInt(normalized, 10);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const [hRaw, minRaw, secRaw] = (timeValue ?? '').split(':');
+  const h = parseTimePart(hRaw);
+  const min = parseTimePart(minRaw);
+  const sec = parseTimePart(secRaw);
+
+  return new Date(y, m - 1, d, h, min, sec);
+};
+
+const STATUS_BADGE: Record<OrderStatus, { label: string; background: string; color: string }> = {
+  pending: { label: 'Pending', background: '#FFF4E5', color: '#C88000' },
+  approved: { label: 'Đã duyệt', background: '#E6F4FF', color: '#0B5ED7' },
+  declined: { label: 'Đã từ chối', background: '#FDE8E8', color: '#C23321' },
+};
+
+const STATUS_TO_DB: Record<OrderStatus, string> = {
+  pending: 'pending',
+  approved: 'approved',
+  declined: 'declined',
 };
 
 const FILTERS = [
@@ -33,57 +69,28 @@ type FilterKey = typeof FILTERS[number]['key'];
 
 type UserContact = Pick<UserProfile, 'id' | 'full_name' | 'phone' | 'email'>;
 
-interface EnrichedOrder extends Order {
-  normalizedStatus: string;
+interface EnrichedOrder extends OrderRecord {
+  status: OrderStatus;
   table?: Table | null;
   customer?: UserContact | null;
   arrivalDateTime?: Date | null;
   party_size?: number | null;
 }
 
-const normalizeStatus = (status?: string | null) => {
-  if (!status) return 'CHO';
-  const trimmed = status.trim().toUpperCase();
-  switch (trimmed) {
-    case 'PENDING':
-      return 'CHO';
-    case 'APPROVED':
-    case 'DA_XAC_NHAN':
-      return 'DA_XAC_NHAN';
-    case 'CHECKED_IN':
-    case 'DA_CHECKIN':
-      return 'DA_CHECKIN';
-    case 'COMPLETED':
-    case 'DONE':
-    case 'DA_THANH_TOAN':
-      return 'DA_THANH_TOAN';
-    case 'DECLINE':
-    case 'REJECTED':
-    case 'DA_TU_CHOI':
-      return 'DA_TU_CHOI';
-    default:
-      return trimmed || 'CHO';
-  }
-};
+const getArrivalDateTime = (order: OrderRecord): Date | null => {
+  const primary = buildLocalDateTime(order.arrive_date, order.arrive_time);
+  if (primary) return primary;
 
-const getArrivalDateTime = (order: Order): Date | null => {
-  if (order.arrive_date && order.arrive_time) {
-    return new Date(`${order.arrive_date}T${order.arrive_time}`);
-  }
-
-  if ((order as any).arrival_at) {
-    const arrivalAt = (order as any).arrival_at as string;
-    if (arrivalAt) return new Date(arrivalAt);
+  const arrivalAt = (order as any).arrival_at as string | undefined;
+  if (arrivalAt) {
+    const timestamp = Date.parse(arrivalAt);
+    if (Number.isFinite(timestamp)) return new Date(timestamp);
   }
 
   return null;
 };
 
-const badgeForStatus = (status: string) => {
-  const normalized = normalizeStatus(status);
-  const fallback = { label: normalized, background: '#F1F1F1', color: '#333333' };
-  return STATUS_BADGE[normalized] ?? fallback;
-};
+const badgeForStatus = (status: OrderStatus) => STATUS_BADGE[status];
 
 const formatDate = (date?: Date | null) => {
   if (!date) return 'Không rõ thời gian';
@@ -93,19 +100,22 @@ const formatDate = (date?: Date | null) => {
   })}`;
 };
 
-const statusRequiresTableUpdate: Record<string, string | null> = {
-  CHO: 'CHO',
-  DA_XAC_NHAN: 'CHO',
-  DA_CHECKIN: 'DANG_SU_DUNG',
-  DA_THANH_TOAN: 'TRONG',
-  DA_TU_CHOI: 'TRONG',
+const STATUS_SUCCESS_MESSAGE: Record<OrderStatus, string> = {
+  pending: 'Đã chuyển đơn về trạng thái pending.',
+  approved: 'Đơn đã được duyệt.',
+  declined: 'Đơn đã bị từ chối.',
 };
 
-const statusSuccessMessage: Record<string, string> = {
-  DA_XAC_NHAN: 'Đã duyệt đơn và giữ bàn thành công.',
-  DA_TU_CHOI: 'Đã từ chối đơn đặt bàn.',
-  DA_CHECKIN: 'Đã chuyển bàn sang trạng thái đang sử dụng.',
-  DA_THANH_TOAN: 'Đã hoàn tất và giải phóng bàn.',
+const STATUS_ACTIONS: Record<OrderStatus, { label: string; next: OrderStatus; tone: 'primary' | 'danger' }[]> = {
+  pending: [
+    { label: 'Duyệt', next: 'approved', tone: 'primary' },
+    { label: 'Từ chối', next: 'declined', tone: 'danger' },
+  ],
+  approved: [
+    { label: 'Chuyển Pending', next: 'pending', tone: 'primary' },
+    { label: 'Từ chối', next: 'declined', tone: 'danger' },
+  ],
+  declined: [],
 };
 
 export default function OrdersManagementScreen() {
@@ -128,7 +138,7 @@ export default function OrdersManagementScreen() {
 
       if (error) throw error;
 
-      const ordersData = data ?? [];
+      const ordersData = (data ?? []) as OrderRecord[];
       const tableIds = Array.from(
         new Set(ordersData.map((o) => o.table_id).filter((id): id is number => typeof id === 'number')),
       );
@@ -163,14 +173,13 @@ export default function OrdersManagementScreen() {
       const [tablesMap, usersMap] = await Promise.all([tablesPromise, usersPromise]);
 
       const enriched: EnrichedOrder[] = ordersData.map((order) => {
-        const normalizedStatus = normalizeStatus(order.status);
-        const arrivalDateTime = getArrivalDateTime(order);
+        const normalizedStatus = normalizeOrderStatus(order.status);
         return {
           ...order,
-          normalizedStatus,
+          status: normalizedStatus,
           table: order.table_id ? tablesMap.get(order.table_id) ?? null : null,
           customer: order.user_id ? usersMap.get(order.user_id) ?? null : null,
-          arrivalDateTime,
+          arrivalDateTime: getArrivalDateTime(order),
         };
       });
 
@@ -214,17 +223,15 @@ export default function OrdersManagementScreen() {
 
       if (!matchesSearch) return false;
 
+      const status = normalizeOrderStatus(order.status);
       switch (filter) {
         case 'pending':
-          return order.normalizedStatus === 'CHO';
+          return status === 'pending';
         case 'upcoming': {
           const now = new Date();
-          const arrival = order.arrivalDateTime;
+          const arrival = order.arrivalDateTime ?? getArrivalDateTime(order);
           const isFutureArrival = arrival ? arrival.getTime() >= now.getTime() : false;
-          return (
-            (order.normalizedStatus === 'DA_XAC_NHAN' && isFutureArrival) ||
-            order.normalizedStatus === 'DA_CHECKIN'
-          );
+          return status === 'approved' && isFutureArrival;
         }
         default:
           return false;
@@ -233,35 +240,19 @@ export default function OrdersManagementScreen() {
   }, [orders, search, filter]);
 
   const transitionOrder = useCallback(
-    async (order: EnrichedOrder, nextStatus: string) => {
+    async (order: EnrichedOrder, nextStatus: OrderStatus) => {
       setProcessingId(order.id);
       try {
-        const updates: Partial<Order> & Record<string, any> = {
-          status: nextStatus,
-        };
-
-        if (nextStatus === 'DA_CHECKIN') {
-          updates.activated_at = new Date().toISOString();
-        }
-        if (nextStatus === 'DA_THANH_TOAN') {
-          updates.active_until = null;
-        }
-
-        const { error: updateError } = await supabase.from('orders').update(updates).eq('id', order.id);
+        const dbStatus = STATUS_TO_DB[nextStatus] ?? nextStatus.toLowerCase();
+        const { error: updateError } = await supabase
+          .from('orders')
+          .update({ status: dbStatus })
+          .eq('id', order.id);
         if (updateError) throw updateError;
-
-        const tableStatus = statusRequiresTableUpdate[nextStatus];
-        if (order.table_id && tableStatus) {
-          const { error: tableError } = await supabase
-            .from('tables')
-            .update({ status: tableStatus, active_until: null })
-            .eq('id', order.table_id);
-          if (tableError) throw tableError;
-        }
 
         await fetchOrders();
 
-        const message = statusSuccessMessage[nextStatus] ?? 'Đã cập nhật trạng thái thành công.';
+        const message = STATUS_SUCCESS_MESSAGE[nextStatus] ?? 'Đã cập nhật trạng thái thành công.';
         Alert.alert('Thành công', message);
       } catch (err: any) {
         console.error('transitionOrder error', err);
@@ -275,66 +266,40 @@ export default function OrdersManagementScreen() {
 
   const renderActions = (order: EnrichedOrder) => {
     const disabled = processingId === order.id;
-    switch (order.normalizedStatus) {
-      case 'CHO':
-        return (
-          <View style={styles.actionsRow}>
-            <TouchableOpacity
-              style={[styles.actionButton, disabled && styles.disabledButton]}
-              onPress={() => transitionOrder(order, 'DA_XAC_NHAN')}
-              disabled={disabled}
+    const actions = STATUS_ACTIONS[order.status] ?? [];
+    if (!actions.length) return null;
+
+    return (
+      <View style={styles.actionsRow}>
+        {actions.map((action, index) => (
+          <TouchableOpacity
+            key={`${action.next}-${index}`}
+            style={[
+              styles.actionButton,
+              index === actions.length - 1 && styles.actionButtonLast,
+              disabled && styles.disabledButton,
+            ]}
+            onPress={() => transitionOrder(order, action.next)}
+            disabled={disabled}
+          >
+            <Text
+              style={[
+                styles.actionButtonText,
+                action.tone === 'primary' ? styles.actionPrimaryText : styles.actionDangerText,
+              ]}
             >
-              <Text style={[styles.actionButtonText, styles.actionPrimaryText]}>Duyệt</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.actionButtonLast, disabled && styles.disabledButton]}
-              onPress={() => transitionOrder(order, 'DA_TU_CHOI')}
-              disabled={disabled}
-            >
-              <Text style={[styles.actionButtonText, styles.actionDangerText]}>Từ chối</Text>
-            </TouchableOpacity>
-          </View>
-        );
-      case 'DA_XAC_NHAN':
-        return (
-          <View style={styles.actionsRow}>
-            <TouchableOpacity
-              style={[styles.actionButton, disabled && styles.disabledButton]}
-              onPress={() => transitionOrder(order, 'DA_CHECKIN')}
-              disabled={disabled}
-            >
-              <Text style={[styles.actionButtonText, styles.actionPrimaryText]}>Check-in</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.actionButtonLast, disabled && styles.disabledButton]}
-              onPress={() => transitionOrder(order, 'DA_TU_CHOI')}
-              disabled={disabled}
-            >
-              <Text style={[styles.actionButtonText, styles.actionDangerText]}>Hủy</Text>
-            </TouchableOpacity>
-          </View>
-        );
-      case 'DA_CHECKIN':
-        return (
-          <View style={styles.actionsRow}>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.actionButtonLast, disabled && styles.disabledButton]}
-              onPress={() => transitionOrder(order, 'DA_THANH_TOAN')}
-              disabled={disabled}
-            >
-              <Text style={[styles.actionButtonText, styles.actionPrimaryText]}>Hoàn tất</Text>
-            </TouchableOpacity>
-          </View>
-        );
-      default:
-        return null;
-    }
+              {action.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
   };
 
   const renderOrder = ({ item }: { item: EnrichedOrder }) => {
-    const badge = badgeForStatus(item.normalizedStatus);
+    const badge = badgeForStatus(item.status);
     const displayPhone = item.customer_phone || item.customer?.phone;
-    const isWaiting = item.normalizedStatus === 'CHO';
+    const isWaiting = item.status === 'pending';
     const createdAt = item.created_at ? new Date(item.created_at) : null;
     const guestName = item.customer_name || item.customer?.full_name || 'Không rõ';
     const createdAtText = createdAt ? formatDate(createdAt) : 'Không rõ';

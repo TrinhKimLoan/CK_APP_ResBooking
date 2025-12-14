@@ -8,7 +8,7 @@ export interface Order {
   arrive_time: string; // time
   activated_at: string | null; // timestamptz
   notes: string;
-  status: 'Đã duyệt' | 'Pending' | 'Decline' | string;
+  status: 'PENDING' | 'APPROVED' | 'DECLINED';
   created_at: string; // timestamptz
   active_until: string | null; // timestamptz
 }
