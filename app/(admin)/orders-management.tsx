@@ -16,15 +16,28 @@ import {
   View,
 } from 'react-native';
 
-type OrderStatus = 'pending' | 'approved' | 'declined';
+type OrderStatus = 'approved' | 'pending' | 'declined';
 
 type OrderRecord = Omit<Order, 'status'> & { status?: string | null };
 
 // Chuẩn hóa trạng thái lấy từ DB để tránh lỗi khi dữ liệu không đồng nhất
 const normalizeOrderStatus = (status?: string | null): OrderStatus => {
   const value = (status ?? '').trim().toLowerCase();
-  if (value === 'approved' || value === 'declined') return value;
-  return 'pending';
+  switch (value) {
+    case 'approved':
+    case 'đã duyệt':
+      return 'approved';
+    case 'declined':
+    case 'decline':
+    case 'đã từ chối':
+      return 'declined';
+    case 'pending':
+    case 'đang chờ':
+    case 'đơn chờ':
+      return 'pending';
+    default:
+      return 'pending';
+  }
 };
 
 const buildLocalDateTime = (dateValue?: string | null, timeValue?: string | null): Date | null => {
@@ -49,7 +62,7 @@ const buildLocalDateTime = (dateValue?: string | null, timeValue?: string | null
 };
 
 const STATUS_BADGE: Record<OrderStatus, { label: string; background: string; color: string }> = {
-  pending: { label: 'Pending', background: '#FFF4E5', color: '#C88000' },
+  pending: { label: 'Đơn chờ', background: '#FFF4E5', color: '#C88000' },
   approved: { label: 'Đã duyệt', background: '#E6F4FF', color: '#0B5ED7' },
   declined: { label: 'Đã từ chối', background: '#FDE8E8', color: '#C23321' },
 };
@@ -61,8 +74,9 @@ const STATUS_TO_DB: Record<OrderStatus, string> = {
 };
 
 const FILTERS = [
-  { key: 'pending', label: 'Đơn đang chờ' },
+  { key: 'all', label: 'Tất cả' },
   { key: 'upcoming', label: 'Đơn sắp tới' },
+  { key: 'pending', label: 'Đơn chờ bàn' },
 ] as const;
 
 type FilterKey = typeof FILTERS[number]['key'];
@@ -101,7 +115,7 @@ const formatDate = (date?: Date | null) => {
 };
 
 const STATUS_SUCCESS_MESSAGE: Record<OrderStatus, string> = {
-  pending: 'Đã chuyển đơn về trạng thái pending.',
+  pending: 'Đã chuyển đơn về trạng thái chờ xử lý.',
   approved: 'Đơn đã được duyệt.',
   declined: 'Đơn đã bị từ chối.',
 };
@@ -112,7 +126,7 @@ const STATUS_ACTIONS: Record<OrderStatus, { label: string; next: OrderStatus; to
     { label: 'Từ chối', next: 'declined', tone: 'danger' },
   ],
   approved: [
-    { label: 'Chuyển Pending', next: 'pending', tone: 'primary' },
+    { label: 'Chuyển chờ', next: 'pending', tone: 'primary' },
     { label: 'Từ chối', next: 'declined', tone: 'danger' },
   ],
   declined: [],
@@ -125,7 +139,7 @@ export default function OrdersManagementScreen() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<FilterKey>('pending');
+  const [filter, setFilter] = useState<FilterKey>('all');
   const [processingId, setProcessingId] = useState<number | null>(null);
 
   const fetchOrders = useCallback(async () => {
@@ -205,7 +219,7 @@ export default function OrdersManagementScreen() {
   }, [fetchOrders]);
 
   const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
+    const result = orders.filter((order) => {
       const searchTerm = search.trim().toLowerCase();
       const matchesSearch = searchTerm
         ? [
@@ -225,6 +239,8 @@ export default function OrdersManagementScreen() {
 
       const status = normalizeOrderStatus(order.status);
       switch (filter) {
+        case 'all':
+          return true;
         case 'pending':
           return status === 'pending';
         case 'upcoming': {
@@ -234,9 +250,19 @@ export default function OrdersManagementScreen() {
           return status === 'approved' && isFutureArrival;
         }
         default:
-          return false;
+          return true;
       }
     });
+
+    if (filter === 'upcoming') {
+      return [...result].sort((a, b) => {
+        const aArrival = (a.arrivalDateTime ?? getArrivalDateTime(a))?.getTime() ?? Number.POSITIVE_INFINITY;
+        const bArrival = (b.arrivalDateTime ?? getArrivalDateTime(b))?.getTime() ?? Number.POSITIVE_INFINITY;
+        return aArrival - bArrival;
+      });
+    }
+
+    return result;
   }, [orders, search, filter]);
 
   const transitionOrder = useCallback(
@@ -276,6 +302,7 @@ export default function OrdersManagementScreen() {
             key={`${action.next}-${index}`}
             style={[
               styles.actionButton,
+              action.tone === 'primary' ? styles.actionButtonPrimary : styles.actionButtonDanger,
               index === actions.length - 1 && styles.actionButtonLast,
               disabled && styles.disabledButton,
             ]}
@@ -285,7 +312,9 @@ export default function OrdersManagementScreen() {
             <Text
               style={[
                 styles.actionButtonText,
-                action.tone === 'primary' ? styles.actionPrimaryText : styles.actionDangerText,
+                action.tone === 'primary'
+                  ? styles.actionButtonPrimaryText
+                  : styles.actionButtonDangerText,
               ]}
             >
               {action.label}
@@ -309,7 +338,7 @@ export default function OrdersManagementScreen() {
         <View style={styles.cardTopRow}>
           <View style={styles.idGroup}>
             <Text style={styles.orderId}>#{item.id}</Text>
-            <View style={[styles.statusPill, { backgroundColor: badge.background }]}> 
+            <View style={[styles.statusPill, { backgroundColor: badge.background }]}>
               <Text style={[styles.statusPillText, { color: badge.color }]}>{badge.label}</Text>
             </View>
           </View>
@@ -406,9 +435,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     backgroundColor: '#F9FAFB',
     marginBottom: 16,
   },
@@ -417,7 +446,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: '#111827',
   },
   filterRow: {
@@ -450,7 +479,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#F4E664',
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -513,9 +542,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     marginRight: 12,
-    backgroundColor: '#F5F5F5',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
   },
   actionButtonLast: {
     marginRight: 0,
@@ -523,13 +550,21 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#111827',
+    color: '#1A1A12',
   },
-  actionPrimaryText: {
-    color: '#0B5ED7',
+  actionButtonPrimary: {
+    backgroundColor: '#FFF01F',
+    borderColor: '#D4BC00',
   },
-  actionDangerText: {
-    color: '#DC2626',
+  actionButtonDanger: {
+    backgroundColor: '#FDECEC',
+    borderColor: '#E57373',
+  },
+  actionButtonPrimaryText: {
+    color: '#1A1A12',
+  },
+  actionButtonDangerText: {
+    color: '#B91C1C',
   },
   disabledButton: {
     opacity: 0.6,
@@ -556,3 +591,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+
+

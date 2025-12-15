@@ -8,19 +8,21 @@ export interface Order {
   arrive_time: string; // time
   activated_at: string | null; // timestamptz
   notes: string;
-  status: 'PENDING' | 'APPROVED' | 'DECLINED';
+  status: 'approved' | 'pending' | 'declined' | string;
   created_at: string; // timestamptz
   active_until: string | null; // timestamptz
 }
+
 
 export interface Table {
   id: number;
   name: string;
   area: string;
   capacity: number;
-  status: string;
+  status: 'available' | 'occupied' | string;
   active_until: string | null; // timestamptz
 }
+
 
 export interface MenuItem {
   id: number;
@@ -29,6 +31,7 @@ export interface MenuItem {
   img: string;        // url hoặc base64
   description: string;
 }
+
 
 export interface UserProfile {
   id: string; // uuid (trùng auth.users.id)
@@ -39,3 +42,6 @@ export interface UserProfile {
   role: 'admin' | 'user' | string;
   email: string;
 }
+
+
+
