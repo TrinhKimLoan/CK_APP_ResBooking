@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
-import OrderItem from "../../components/OrderItem";
+import OrderItem from "../../../components/OrderItem";
 
 export default function BookingScreen() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function BookingScreen() {
   }, []);
 
   const cancelOrder = async (id: number) => {
-    await supabase.from("orders").update({ status: "cancelled" }).eq("id", id);
+    await supabase.from("orders").update({ status: "declined" }).eq("id", id);
     fetchOrders();
   };
 
@@ -33,7 +33,7 @@ export default function BookingScreen() {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => router.push("/(user)/create")}
+        onPress={() => router.push("/(user)/(tabs)/create_order")}
       >
         <Text style={styles.createText}>+ Tạo đơn đặt bàn</Text>
       </TouchableOpacity>

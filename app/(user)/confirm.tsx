@@ -17,9 +17,8 @@ export default function Confirm() {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Debug params
   useEffect(() => {
-    console.log("🟢 Confirm params:", params);
+    console.log("Confirm params:", params);
   }, []);
 
   useEffect(() => {
@@ -35,12 +34,12 @@ export default function Confirm() {
         } = await supabase.auth.getUser();
 
         if (userError) {
-        console.log("❌ Auth error:", userError);
+        console.log("Auth error:", userError);
         return;
         }
 
         if (!user) {
-        console.log("❌ Không có user đăng nhập!");
+        console.log("Không có user đăng nhập!");
         return;
         }
         setUserId(user.id);
@@ -49,25 +48,24 @@ export default function Confirm() {
         const { data: profile, error } = await supabase
         .from("user_profile")
         .select("*")
-        .eq("id", user.id)   // ✔ CHÍNH XÁC NHẤT
+        .eq("id", user.id)  
         .single();
 
         if (error) {
-        console.log("❌ Lỗi lấy user_profile:", error.message);
+        console.log("Lỗi lấy user_profile:", error.message);
         return;
         }
 
         // 3) Lưu vào state để hiển thị + insert order
-        console.log("🟢 Đã load profile:", profile);
+        console.log("Đã load profile:", profile);
         setUserProfile(profile);
 
     } catch (err) {
-        console.log("❌ Lỗi load profile:", err);
+        console.log("Lỗi load profile:", err);
     } finally {
         setLoading(false);
     }
     };
-
 
   const submitOrder = async () => {
     if (!dateStr) {
@@ -75,15 +73,10 @@ export default function Confirm() {
       return;
     }
 
-    // ───────────────────────────────────────────
-    // TÁCH NGÀY + GIỜ ĐÚNG THEO SCHEMA orders
-    // ───────────────────────────────────────────
     const arrive_date = dateStr; // yyyy-mm-dd (đã đúng format)
     const arrive_time = `${hour.toString().padStart(2, "0")}:${minute
       .toString()
       .padStart(2, "0")}:00`;
-
-    console.log("📤 Insert:", { arrive_date, arrive_time });
 
     const { data, error } = await supabase.rpc(
       "create_order_with_check",
@@ -130,7 +123,7 @@ export default function Confirm() {
     return (
       <View style={styles.center}>
         <Text style={{ color: "red", fontSize: 18 }}>
-          ❌ Dữ liệu truyền sang confirm bị thiếu!
+          Dữ liệu truyền sang confirm bị thiếu!
         </Text>
         <TouchableOpacity onPress={() => router.back()} style={styles.btn}>
           <Text style={styles.btnText}>Quay lại</Text>

@@ -11,7 +11,7 @@ export default function Success() {
 
       <TouchableOpacity
         style={styles.btn}
-        onPress={() => router.push("/(user)/home")}
+        onPress={() => router.push("/(user)/(tabs)/his")}
       >
         <Text style={styles.btnText}>Về trang chủ</Text>
       </TouchableOpacity>

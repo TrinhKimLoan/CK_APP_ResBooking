@@ -8,7 +8,7 @@ export interface Order {
   arrive_time: string; // time
   activated_at: string | null; // timestamptz
   notes: string;
-  status: 'Đã duyệt' | 'Pending' | 'Decline' | string;
+  status: 'approved'| 'pending'| 'declined'| string;
   created_at: string; // timestamptz
   active_until: string | null; // timestamptz
 }
@@ -18,7 +18,7 @@ export interface Table {
   name: string;
   area: string;
   capacity: number;
-  status: string;
+  status: 'available' | 'occupied' | string;
   active_until: string | null; // timestamptz
 }
 
