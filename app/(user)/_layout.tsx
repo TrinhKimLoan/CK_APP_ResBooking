@@ -14,10 +14,10 @@ export default function UserLayout() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* Tabs */}
+      {/* Bottom Tabs */}
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-      {/* Confirm */}
+      {/* Các màn KHÔNG có bottom tab */}
       <Stack.Screen
         name="confirm"
         options={{
@@ -25,7 +25,12 @@ export default function UserLayout() {
           title: "Xác nhận đặt bàn",
         }}
       />
-      <Stack.Screen name="success" />
+      <Stack.Screen
+        name="success"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }
