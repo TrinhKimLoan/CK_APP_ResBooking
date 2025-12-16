@@ -33,7 +33,7 @@ export default function UserLayout() {
       <Tabs.Screen
         name="create_order"
         options={{
-          title: "Tạo đơn",
+          title: "Đặt bàn",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="add-circle" size={size} color={color} />
           ),
@@ -43,9 +43,9 @@ export default function UserLayout() {
       <Tabs.Screen
         name="his"
         options={{
-          title: "Lịch sử",
+          title: "Đơn của tôi",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="time-outline" size={size} color={color} />
+            <Ionicons name="time" size={size} color={color} />
           ),
         }}
       />

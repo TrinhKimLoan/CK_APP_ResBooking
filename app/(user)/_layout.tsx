@@ -1,11 +1,20 @@
 // app/(user)/_layout.tsx
+
 import { useAuth } from "@/context/auth";
 import { Redirect, Stack } from "expo-router";
+import { View, ActivityIndicator } from "react-native";
 
 export default function UserLayout() {
-  const { user, loading } = useAuth();
+  const { user, loading, role } = useAuth();
+  const normalizedRole = role?.toLowerCase();
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   // Chưa login → về login
   if (!user) {
@@ -31,6 +40,14 @@ export default function UserLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="menu"
+        options={{
+          headerShown: true,
+          title: "Xem menu",
+        }}
+      />
     </Stack>
+
   );
 }

@@ -13,6 +13,7 @@ export interface Order {
   active_until: string | null; // timestamptz
 }
 
+
 export interface Table {
   id: number;
   name: string;
@@ -22,6 +23,7 @@ export interface Table {
   active_until: string | null; // timestamptz
 }
 
+
 export interface MenuItem {
   id: number;
   name: string;
@@ -29,6 +31,7 @@ export interface MenuItem {
   img: string;        // url hoặc base64
   description: string;
 }
+
 
 export interface UserProfile {
   id: string; // uuid (trùng auth.users.id)
@@ -39,3 +42,6 @@ export interface UserProfile {
   role: 'admin' | 'user' | string;
   email: string;
 }
+
+
+

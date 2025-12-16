@@ -16,8 +16,8 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (user && role) {
-      if (role === 'admin') router.replace('/(admin)/dashboard');
-      else router.replace('/(user)/home');
+      if (role === 'admin') router.replace('/(admin)/orders-management');
+      else router.replace("/(user)/home");
     }
   }, [user, role]);
 

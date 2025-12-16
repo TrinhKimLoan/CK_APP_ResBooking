@@ -20,7 +20,9 @@ export default function TableGrid({
 }: TableGridProps) {
   return (
     <View style={styles.grid}>
-      {tables.map((t) => {
+      {[...tables]
+      .sort((a, b) => a.name.localeCompare(b.name, "vi"))
+      .map((t) => {
         const isDisabled = !freeTableIds.includes(t.id) || t.capacity < people;
 
         return (

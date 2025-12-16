@@ -96,7 +96,7 @@ export default function CreateBooking() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior="height"
       keyboardVerticalOffset={80}
     >
       <ScrollView
@@ -105,7 +105,10 @@ export default function CreateBooking() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
-          <Text style={styles.title}>Đơn đặt bàn</Text>
+          <View style={styles.header}>
+            <Text style={styles.title}>ĐƠN ĐẶT BÀN</Text>
+          </View>
+
 
           {/* Thông tin đặt chỗ */}
           <Text style={styles.sectionTitle}>Thông tin đặt chỗ</Text>
@@ -154,19 +157,41 @@ export default function CreateBooking() {
 
 /* ================= STYLES ================= */
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: "#f2f2f2" },
-  title: { fontSize: 22, fontWeight: "700", marginBottom: 20, textAlign: "center" },
-  sectionTitle: { marginTop: 20, fontSize: 18, fontWeight: "700" },
+  container: { padding: 16, backgroundColor: "#efd3a4ff" },
+  header: {
+    paddingTop: 20,         // tránh status bar
+    paddingBottom: 16,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    alignItems: "center",
+    elevation: 2,
+  },
+
+  title: {
+    fontSize: 24,
+    fontWeight: "800",
+    letterSpacing: 1,
+    color: "#EC5A11"
+  },
+  sectionTitle: {
+    marginTop: 24,
+    marginBottom: 8,
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#333",
+  },
   submitBtn: {
-    marginTop: 30,
-    backgroundColor: "#000",
-    paddingVertical: 14,
-    borderRadius: 12,
+    marginTop: 32,
+    backgroundColor: "#EC5A11",
+    paddingVertical: 16,
+    borderRadius: 14,
+    elevation: 4,
   },
   submitText: {
     color: "#fff",
     textAlign: "center",
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 17,
   },
 });

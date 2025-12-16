@@ -9,7 +9,9 @@ interface AreaSelectorProps {
 export default function AreaSelector({ areas, selectedArea, setSelectedArea }: AreaSelectorProps) {
   return (
     <View style={styles.areaRow}>
-      {areas.map((area) => (
+      {[...areas]
+      .sort((a, b) => a.localeCompare(b, "vi"))
+      .map((area) => (
         <TouchableOpacity
           key={area}
           style={[
