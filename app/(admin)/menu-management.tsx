@@ -1,185 +1,183 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  Alert, 
+import React, { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
   StyleSheet,
-  ScrollView 
-} from 'react-native';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/auth';
+  Alert,
+} from "react-native";
+import MenuCard from "@/components/Admin_menu/MenuCard";
+import MenuModal from "@/components/Admin_menu/MenuModal";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminMenuScreen() {
-  const { role } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    description: '',
-    img: ''
-  });
+  const [menu, setMenu] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editItem, setEditItem] = useState(null);
 
-  const handleAddMenu = async () => {
-    if (!formData.name || !formData.price) {
-      Alert.alert('Lỗi', 'Vui lòng điền tên và giá món ăn');
+  // Load danh sách từ DB
+  const fetchMenu = async () => {
+    const { data } = await supabase.from("menu").select("*").order("id");
+    setMenu(data || []);
+  };
+
+  useEffect(() => {
+    fetchMenu();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMenu();
+    }, [])
+  );
+
+ 
+ // Thêm hoặc sửa món
+const addOrUpdate = async (form: any) => {
+  if (editItem) {
+    // Sửa món
+    const { error } = await supabase
+      .from("menu")
+      .update(form)
+      .eq("id", editItem.id);
+
+    if (error) {
+      Alert.alert("Lỗi", "Không thể cập nhật món ăn!");
       return;
     }
 
-    setLoading(true);
+    Alert.alert("Thành công", "Cập nhật món ăn thành công!");
+  } else {
+    // Thêm món mới
+    const { error } = await supabase.from("menu").insert([form]);
 
-    try {
-      const { data, error } = await supabase
-        .from('menu')
-        .insert([
-          {
-            name: formData.name,
-            price: parseFloat(formData.price),
-            description: formData.description,
-            img: formData.img
-          }
-        ])
-        .select();
-
-      if (error) {
-        throw error;
-      }
-
-      Alert.alert('Thành công', 'Đã thêm món ăn vào menu!');
-      
-      // Reset form
-      setFormData({
-        name: '',
-        price: '',
-        description: '',
-        img: ''
-      });
-
-    } catch (error: any) {
-      Alert.alert('Lỗi', error.message || 'Có lỗi xảy ra');
-    } finally {
-      setLoading(false);
+    if (error) {
+      Alert.alert("Lỗi", "Không thể thêm món ăn!");
+      return;
     }
-  };
 
-  // Chỉ admin mới được thêm món
-  if (role !== 'admin') {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Chỉ admin mới có quyền truy cập</Text>
-      </View>
-    );
+    Alert.alert("Thành công", "Thêm món ăn thành công!");
   }
 
+  setModalVisible(false);
+  setEditItem(null);
+  fetchMenu(); // reload danh sách
+};
+
+  // Xóa có confirm
+  const handleDelete = (id: number) => {
+    Alert.alert(
+      "Xác nhận xoá",
+      "Bạn có chắc chắn muốn xoá món ăn này không?",
+      [
+        { text: "Hủy", style: "cancel" },
+        {
+          text: "Xoá",
+          style: "destructive",
+          onPress: () => confirmDelete(id),
+        },
+      ]
+    );
+  };
+
+  const confirmDelete = async (id: number) => {
+    const { error } = await supabase.from("menu").delete().eq("id", id);
+    if (error) {
+      Alert.alert("Lỗi xoá", error.message);
+      return;
+    }
+    setMenu((prev) => prev.filter((item) => item.id !== id));
+
+    Alert.alert("Thành công", "Đã xoá món ăn.");
+  };
+
+  // Lọc theo tìm kiếm
+  const filtered = menu.filter((m) =>
+    m.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Thêm Món Ăn Mới</Text>
-      
-      <View style={styles.form}>
-        <Text style={styles.label}>Tên món ăn *</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Quản Lý Món Ăn</Text>
+
+      <View style={styles.row}>
         <TextInput
-          style={styles.input}
-          value={formData.name}
-          onChangeText={(text) => setFormData({...formData, name: text})}
-          placeholder="Nhập tên món ăn"
+          style={styles.search}
+          placeholder="Tìm kiếm món ăn"
+          value={search}
+          onChangeText={setSearch}
         />
 
-        <Text style={styles.label}>Giá *</Text>
-        <TextInput
-          style={styles.input}
-          value={formData.price}
-          onChangeText={(text) => setFormData({...formData, price: text})}
-          placeholder="Nhập giá"
-          keyboardType="numeric"
-        />
-
-        <Text style={styles.label}>Mô tả</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          value={formData.description}
-          onChangeText={(text) => setFormData({...formData, description: text})}
-          placeholder="Mô tả món ăn"
-          multiline
-          numberOfLines={3}
-        />
-
-        <Text style={styles.label}>Hình ảnh (URL)</Text>
-        <TextInput
-          style={styles.input}
-          value={formData.img}
-          onChangeText={(text) => setFormData({...formData, img: text})}
-          placeholder="https://example.com/image.jpg"
-        />
-
-        <TouchableOpacity 
-          style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={handleAddMenu}
-          disabled={loading}
+        <TouchableOpacity
+          style={styles.addBtn}
+          onPress={() => {
+            setEditItem(null);
+            setModalVisible(true);
+          }}
         >
-          <Text style={styles.buttonText}>
-            {loading ? 'Đang thêm...' : 'Thêm Món Ăn'}
-          </Text>
+          <Text style={styles.addText}>+ Thêm món</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+
+      <ScrollView>
+        {filtered.map((item) => (
+          <MenuCard
+            key={item.id}
+            item={item}
+            onEdit={(i: any) => {
+              setEditItem(i);
+              setModalVisible(true);
+            }}
+            onDelete={handleDelete}
+
+          />
+        ))}
+      </ScrollView>
+
+      <MenuModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={addOrUpdate}
+        defaultValue={editItem}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 10,
+    marginTop: 30,
+    backgroundColor: "#fff"
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 20 
   },
-  form: {
-    marginBottom: 30,
+  row: {
+    flexDirection: "row",
+    marginBottom: 15 
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
-  },
-  input: {
+  search: {
+    flex: 1,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     padding: 12,
-    marginBottom: 16,
     borderRadius: 8,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f5f5f5",
   },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
+  addBtn: {
+    paddingHorizontal: 15,
+    marginLeft: 10,
+    backgroundColor: "#007AFF",
     borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+    justifyContent: "center",
   },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 50,
-  },
+  addText: { color: "#fff", fontWeight: "bold" },
 });

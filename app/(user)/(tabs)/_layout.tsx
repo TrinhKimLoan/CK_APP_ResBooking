@@ -24,9 +24,9 @@ export default function UserLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: "Trang chủ",
+          title: "Menu",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="fast-food" size={size} color={color} />
           ),
         }}
       />
