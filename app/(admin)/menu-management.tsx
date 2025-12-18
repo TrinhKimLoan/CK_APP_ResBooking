@@ -1,17 +1,18 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useFocusEffect } from "expo-router";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  Alert,
-} from "react-native";
 import MenuCard from "@/components/Admin_menu/MenuCard";
 import MenuModal from "@/components/Admin_menu/MenuModal";
+import { Accent } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 export default function AdminMenuScreen() {
   const [menu, setMenu] = useState<any[]>([]);
@@ -151,14 +152,15 @@ const addOrUpdate = async (form: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    marginTop: 30,
-    backgroundColor: "#fff"
+    padding: 20,
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 20 
+    marginBottom: 20,
+    alignSelf: "center",
+    textAlign: "center",
   },
   row: {
     flexDirection: "row",
@@ -167,7 +169,7 @@ const styles = StyleSheet.create({
   search: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: Accent.light,
     padding: 12,
     borderRadius: 8,
     backgroundColor: "#f5f5f5",
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   addBtn: {
     paddingHorizontal: 15,
     marginLeft: 10,
-    backgroundColor: "#007AFF",
+    backgroundColor: Accent.base,
     borderRadius: 8,
     justifyContent: "center",
   },

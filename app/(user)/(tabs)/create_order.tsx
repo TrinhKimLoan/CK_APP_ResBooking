@@ -1,19 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { Accent } from "@/constants/theme";
 import { Table } from "@/types/database";
 import { router } from "expo-router";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Components
-import PeopleCounter from "@/components/PeopleCounter";
-import DateTimeSection from "@/components/DateTimeSection";
 import AreaSelector from "@/components/AreaSelector";
-import TableSection from "@/components/TableSection";
+import DateTimeSection from "@/components/DateTimeSection";
 import NoteSection from "@/components/NoteSection";
+import PeopleCounter from "@/components/PeopleCounter";
+import TableSection from "@/components/TableSection";
 
 // Hooks
-import { useTables } from "@/hooks/useTables";
 import { useFreeTables } from "@/hooks/useFreeTables";
+import { useTables } from "@/hooks/useTables";
 
 export default function CreateBooking() {
   /* ================= STATE ================= */
@@ -95,19 +95,17 @@ export default function CreateBooking() {
   /* ================= RENDER ================= */
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#FFFFFF" }}
       behavior="height"
       keyboardVerticalOffset={80}
     >
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, backgroundColor: "#FFFFFF" }}
         contentContainerStyle={{ paddingBottom: 60 }}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.title}>ĐƠN ĐẶT BÀN</Text>
-          </View>
+          <Text style={styles.title}>Đơn đặt bàn</Text>
 
 
           {/* Thông tin đặt chỗ */}
@@ -157,22 +155,18 @@ export default function CreateBooking() {
 
 /* ================= STYLES ================= */
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: "#efd3a4ff" },
-  header: {
-    paddingTop: 20,         // tránh status bar
-    paddingBottom: 16,
-    marginBottom: 12,
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    alignItems: "center",
-    elevation: 2,
+  container: {
+    padding: 20,
+    backgroundColor: "#FFFFFF",
   },
-
   title: {
     fontSize: 24,
-    fontWeight: "800",
-    letterSpacing: 1,
-    color: "#EC5A11"
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    color: Accent.base,
+    alignSelf: "center",
+    textAlign: "center",
+    marginBottom: 12,
   },
   sectionTitle: {
     marginTop: 24,
@@ -183,7 +177,7 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     marginTop: 32,
-    backgroundColor: "#EC5A11",
+    backgroundColor: Accent.base,
     paddingVertical: 16,
     borderRadius: 14,
     elevation: 4,

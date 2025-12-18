@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { Accent } from "@/constants/theme";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type OrderStatus = 'approved' | 'pending' | 'declined';
 
@@ -77,11 +78,11 @@ export default function OrderItem({ item, onCancel }: any) {
 const styles = StyleSheet.create({
   card: {
     padding: 15,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: Accent.light,
   },
   title: { fontSize: 18, fontWeight: "600", marginBottom: 5 },
 

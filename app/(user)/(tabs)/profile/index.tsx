@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Colors, Fonts } from '@/constants/theme';
+import { Accent, Colors, Fonts } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+    ActivityIndicator,
+    Alert,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Profile = {
@@ -27,6 +27,13 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+
+  const menuItems = [
+    { label: 'Thông tin tài khoản', route: '/(user)/profile/info' },
+    { label: 'Đổi mật khẩu', route: '/(user)/profile/change-password' },
+    { label: 'Trung tâm trợ giúp', route: '/(user)/profile/help-center' },
+    { label: 'Điều khoản & chính sách bảo mật', route: '/(user)/profile/privacy-policy' },
+  ];
 
   useEffect(() => {
     fetchProfile();
@@ -131,55 +138,47 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Avatar */}
-      <View style={styles.profileHeader}>
-        <TouchableOpacity onPress={handlePickAvatar}>
-          <Image
-            source={{
-              uri:
-                profile?.avatar_url ||
-                `https://ui-avatars.com/api/?name=${profile?.full_name || 'User'}`,
-            }}
-            style={styles.avatar}
-          />
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Avatar */}
+        <View style={styles.profileHeader}>
+          <TouchableOpacity onPress={handlePickAvatar}>
+            <Image
+              source={{
+                uri:
+                  profile?.avatar_url ||
+                  `https://ui-avatars.com/api/?name=${profile?.full_name || 'User'}`,
+              }}
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
+
+          {uploading && (
+            <Text style={styles.uploading}>Đang cập nhật ảnh...</Text>
+          )}
+
+          <Text style={styles.name}>
+            {profile?.full_name || 'Người dùng'}
+          </Text>
+          <Text style={styles.email}>{profile?.email}</Text>
+        </View>
+
+        {/* Menu */}
+        <View style={styles.menuContainer}>
+          {menuItems.map((item, index) => (
+            <ProfileItem
+              key={item.route}
+              label={item.label}
+              onPress={() => router.push(item.route)}
+              isLast={index === menuItems.length - 1}
+            />
+          ))}
+        </View>
+
+        {/* Logout */}
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Đăng xuất</Text>
         </TouchableOpacity>
-
-        {uploading && (
-          <Text style={styles.uploading}>Đang cập nhật ảnh...</Text>
-        )}
-
-        <Text style={styles.name}>
-          {profile?.full_name || 'Người dùng'}
-        </Text>
-        <Text style={styles.email}>{profile?.email}</Text>
-      </View>
-
-      {/* Menu */}
-      <View style={styles.menuContainer}>
-        <ProfileItem
-          label="Thông tin tài khoản"
-          onPress={() => router.push('/(user)/profile/info')}
-        />
-        <ProfileItem
-          label="Đổi mật khẩu"
-          onPress={() => router.push('/(user)/profile/change-password')}
-        />
-        <ProfileItem
-          label="Trung tâm trợ giúp"
-          onPress={() => router.push('/(user)/profile/help-center')}
-        />
-        <ProfileItem
-          label="Điều khoản & chính sách bảo mật"
-          onPress={() => router.push('/(user)/profile/privacy-policy')}
-        />
-      </View>
-
-      {/* Logout */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Đăng xuất</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -187,12 +186,17 @@ export default function ProfileScreen() {
 function ProfileItem({
   label,
   onPress,
+  isLast,
 }: {
   label: string;
   onPress: () => void;
+  isLast?: boolean;
 }) {
   return (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.item, isLast && styles.itemLast]}
+      onPress={onPress}
+    >
       <Text style={styles.itemText}>{label}</Text>
       <Text style={styles.arrow}>›</Text>
     </TouchableOpacity>
@@ -247,6 +251,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     marginBottom: 30,
+    paddingVertical: 4,
   },
 
   item: {
@@ -255,7 +260,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#e5e7eb',
+  },
+
+  itemLast: {
+    borderBottomWidth: 0,
   },
 
   itemText: {
@@ -269,7 +278,7 @@ const styles = StyleSheet.create({
   },
 
   logoutButton: {
-    backgroundColor: '#f59e0b',
+    backgroundColor: Accent.base,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',

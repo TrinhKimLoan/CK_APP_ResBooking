@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
-import { Table } from "@/types/database";
 import TableGrid from "@/components/TableGrid";
+import { Accent } from "@/constants/theme";
+import { Table } from "@/types/database";
+import { StyleSheet, Text, View } from "react-native";
 
 interface TableSectionProps {
   tables: Table[];
@@ -45,5 +46,5 @@ export default function TableSection({
 
 const styles = StyleSheet.create({
   sectionTitle: { marginTop: 20, fontSize: 18, fontWeight: "700" },
-  selectedInfo: { marginTop: 10, color: "#FF6600", fontWeight: "700" },
+  selectedInfo: { marginTop: 10, color: Accent.base, fontWeight: "700" },
 });

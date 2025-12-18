@@ -1,3 +1,4 @@
+import { Accent } from '@/constants/theme';
 import { useAuth } from '@/context/auth';
 import { supabase } from '@/lib/supabase';
 import type { Order, Table, UserProfile } from '@/types/database';
@@ -5,15 +6,15 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 type OrderStatus = 'approved' | 'pending' | 'declined';
@@ -66,6 +67,9 @@ const STATUS_BADGE: Record<OrderStatus, { label: string; background: string; col
   approved: { label: 'Đã duyệt', background: '#E6F4FF', color: '#0B5ED7' },
   declined: { label: 'Đã từ chối', background: '#FDE8E8', color: '#C23321' },
 };
+
+const ACCENT = Accent.base;
+const ACCENT_LIGHT = Accent.light;
 
 const STATUS_TO_DB: Record<OrderStatus, string> = {
   pending: 'pending',
@@ -400,7 +404,7 @@ export default function OrdersManagementScreen() {
       </View>
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#007AFF" />
+          <ActivityIndicator size="large" color={ACCENT} />
         </View>
       ) : (
         <FlatList
@@ -429,16 +433,18 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 16,
     color: '#111827',
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   searchWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: ACCENT_LIGHT,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#FFFFFF',
     marginBottom: 16,
   },
   searchIcon: {
@@ -457,14 +463,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 999,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#FFFFFF',
     marginRight: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
   },
   filterChipActive: {
-    backgroundColor: '#111827',
-    borderColor: '#111827',
+    backgroundColor: ACCENT,
   },
   filterChipText: {
     color: '#4B5563',
@@ -479,7 +482,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#F4E664',
+    borderColor: ACCENT_LIGHT,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -542,7 +545,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     marginRight: 12,
-    borderWidth: 1,
   },
   actionButtonLast: {
     marginRight: 0,
@@ -553,15 +555,13 @@ const styles = StyleSheet.create({
     color: '#1A1A12',
   },
   actionButtonPrimary: {
-    backgroundColor: '#FFF01F',
-    borderColor: '#D4BC00',
+    backgroundColor: ACCENT,
   },
   actionButtonDanger: {
     backgroundColor: '#FDECEC',
-    borderColor: '#E57373',
   },
   actionButtonPrimaryText: {
-    color: '#1A1A12',
+    color: '#FFFFFF',
   },
   actionButtonDangerText: {
     color: '#B91C1C',

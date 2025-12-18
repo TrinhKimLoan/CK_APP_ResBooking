@@ -1,18 +1,18 @@
+import { Accent, Colors, Fonts } from '@/constants/theme';
+import { useAuth } from '@/context/auth';
+import { supabase } from '@/lib/supabase';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-  ActivityIndicator,
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/auth';
-import { Colors, Fonts } from '@/constants/theme';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function ChangePasswordScreen() {
   const { user, loading: authLoading } = useAuth();
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: Accent.light,
     borderRadius: 8,
     paddingHorizontal: 12,
   },
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     color:'#555555ff',
   },
   button: {
-    backgroundColor: '#f59e0b',
+    backgroundColor: Accent.base,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',

@@ -1,13 +1,14 @@
+import { Accent } from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 const defaultDishImage = require("@/assets/app/default_food.png");
 
@@ -31,6 +32,7 @@ export default function MenuCard({
   onEdit,
   onDelete,
 }: MenuCardProps) {
+  const ACCENT = Accent.base;
   const imageSource = item.img
     ? { uri: item.img }
     : defaultDishImage;
@@ -65,7 +67,7 @@ export default function MenuCard({
         <View style={styles.row}>
           
           <TouchableOpacity onPress={() => onEdit(item)}>
-            <Ionicons name="create-outline" size={22} color="#007AFF" />
+            <Ionicons name="create-outline" size={22} color={ACCENT} />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => onDelete(item.id)}>
@@ -87,12 +89,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: Accent.light,
   },
   img: { width: 90, height: 90, borderRadius: 10 },
   name: { fontSize: 16, fontWeight: "bold" },
   desc: { fontSize: 14, color: "#555" },
-  price: { marginTop: 4, fontWeight: "600", color: "#007AFF" },
+  price: { marginTop: 4, fontWeight: "600", color: Accent.base },
   row: {
     marginTop: 10,
     flexDirection: "row",

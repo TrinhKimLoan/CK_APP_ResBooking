@@ -1,26 +1,26 @@
 import DateTimePicker, {
-  AndroidNativeProps,
-  DateTimePickerEvent,
-  IOSNativeProps,
+    AndroidNativeProps,
+    DateTimePickerEvent,
+    IOSNativeProps,
 } from '@react-native-community/datetimepicker';
 import React, { useEffect, useState } from 'react';
 import {
-  Modal,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Modal,
+    Platform,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 const palette = {
-  backdrop: 'rgba(26, 26, 18, 0.35)',
+  backdrop: 'rgba(17, 24, 39, 0.35)',
   surface: '#FFFFFF',
-  shadow: '#E8D959',
-  textPrimary: '#1A1A12',
-  textSecondary: '#6F6500',
-  accent: '#FFF01F',
-  accentDark: '#D4BC00',
+  shadow: '#f59e0b',
+  textPrimary: '#1F2937',
+  textSecondary: '#4B5563',
+  accent: '#f59e0b',
+  accentDark: '#d97706',
 };
 
 type DatePickerDisplay = AndroidNativeProps['display'] | IOSNativeProps['display'];

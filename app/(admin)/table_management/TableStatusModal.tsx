@@ -1,36 +1,36 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    Pressable,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import {
-  TABLE_STATUS_DISPLAY,
-  TableStatus,
-  TableWithStatus,
+    TABLE_STATUS_DISPLAY,
+    TableStatus,
+    TableWithStatus,
 } from './useTableManagement';
 
 const palette = {
-  backdrop: 'rgba(26, 26, 18, 0.45)',
+  backdrop: 'rgba(17, 24, 39, 0.45)',
   sheet: '#FFFFFF',
-  textPrimary: '#1A1A12',
-  textSecondary: '#6F6500',
-  textMuted: '#7A740A',
-  badgeBackground: '#FFF6B1',
-  badgeText: '#5C5300',
-  border: '#F4E664',
-  activeBorder: '#FFF01F',
-  activeBackground: '#FFF9BE',
-  radioInactive: '#E8DC50',
-  radioActive: '#FFF01F',
-  confirmBackground: '#FFF01F',
-  confirmDisabled: '#E6DF9B',
-  confirmText: '#1A1A12',
+  textPrimary: '#1F2937',
+  textSecondary: '#4B5563',
+  textMuted: '#6B7280',
+  badgeBackground: '#fff7eb',
+  badgeText: '#92400e',
+  border: '#fcd34d',
+  activeBorder: '#f59e0b',
+  activeBackground: '#fef3c7',
+  radioInactive: '#fde68a',
+  radioActive: '#f59e0b',
+  confirmBackground: '#f59e0b',
+  confirmDisabled: '#fcd34d',
+  confirmText: '#1F2937',
 };
 
 type TableStatusModalProps = {
@@ -142,7 +142,7 @@ export function TableStatusModal({
                 disabled={disableConfirm}
               >
                 {submitting ? (
-                  <ActivityIndicator color={palette.confirmText} />
+                  <ActivityIndicator color="#FFFFFF" />
                 ) : (
                   <Text style={styles.confirmButtonText}>Lưu thay đổi</Text>
                 )}
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     elevation: 6,
-    shadowColor: '#E8D959',
+    shadowColor: palette.activeBorder,
     shadowOpacity: 0.18,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 8 },

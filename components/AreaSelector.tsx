@@ -1,4 +1,5 @@
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Accent } from "@/constants/theme";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface AreaSelectorProps {
   areas: string[];
@@ -34,7 +35,7 @@ export default function AreaSelector({ areas, selectedArea, setSelectedArea }: A
   );
 }
 
-const PRIMARY = "#EC5A11";
+const PRIMARY = Accent.base;
 const styles = StyleSheet.create({
   areaRow: { flexDirection: "row", marginTop: 10, gap: 10 },
   areaBtn: {
@@ -43,10 +44,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: Accent.light,
   },
   areaBtnActive: {
-    backgroundColor: "#ea804cff",  
+    backgroundColor: PRIMARY,
     borderColor: PRIMARY,
   },
   areaText: {

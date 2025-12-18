@@ -1,19 +1,18 @@
-import { ScrollView, View, Text, StyleSheet, Linking, TouchableOpacity } from 'react-native';
-import { Fonts, Colors } from '@/constants/theme';
+import { Accent, Colors, Fonts } from '@/constants/theme';
+import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 export default function HelpCenterScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-
       <Text style={styles.sectionTitle}>📞 Hotline</Text>
       <TouchableOpacity onPress={() => Linking.openURL('tel:19001234')}>
-        <Text style={styles.text}>1900 1234</Text>
+        <Text style={[styles.text, styles.link]}>1900 1234</Text>
       </TouchableOpacity>
       <Text style={styles.note}>Giờ làm việc: 08:00 - 21:00 (Tất cả các ngày trong tuần)</Text>
 
       <Text style={styles.sectionTitle}>📧 Email hỗ trợ</Text>
       <TouchableOpacity onPress={() => Linking.openURL('mailto:support@reserva.vn')}>
-        <Text style={styles.text}>support@reserva.vn</Text>
+        <Text style={[styles.text, styles.link]}>support@reserva.vn</Text>
       </TouchableOpacity>
       <Text style={styles.note}>Chúng tôi sẽ phản hồi trong vòng 24 giờ làm việc.</Text>
 
@@ -50,6 +49,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 15,
     marginBottom: 5,
+    color: Accent.base,
   },
   text: {
     fontFamily: Fonts.sans,
@@ -57,6 +57,10 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: '#333',
     marginBottom: 10,
+  },
+  link: {
+    color: Accent.base,
+    fontWeight: '600',
   },
   note: {
     fontFamily: Fonts.sans,

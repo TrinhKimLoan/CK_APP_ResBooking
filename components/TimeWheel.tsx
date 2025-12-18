@@ -1,5 +1,6 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { Accent } from "@/constants/theme";
 import React from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface TimeWheelProps {
   hour: number;
@@ -67,5 +68,5 @@ const styles = StyleSheet.create({
     color: "#666",
     paddingVertical: 6,
   },
-  selected: { color: "#000", fontWeight: "700", fontSize: 20 },
+  selected: { color: Accent.base, fontWeight: "700", fontSize: 20 },
 });

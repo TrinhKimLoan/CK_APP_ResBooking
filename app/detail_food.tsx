@@ -1,18 +1,19 @@
-import { useLocalSearchParams, router } from "expo-router";
+import MenuModal from "@/components/Admin_menu/MenuModal";
+import { Accent } from "@/constants/theme";
+import { supabase } from "@/lib/supabase";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  Alert
+    ActivityIndicator,
+    Alert,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
-import { supabase } from "@/lib/supabase";
-import MenuModal from "@/components/Admin_menu/MenuModal";
-import { Ionicons } from "@expo/vector-icons";
 
 export default function DetailFood() {
   const { id, role } = useLocalSearchParams();
@@ -43,7 +44,7 @@ export default function DetailFood() {
     setLoading(false);
   }
 
-  if (loading) return <ActivityIndicator style={{ marginTop: 40 }} />;
+  if (loading) return <ActivityIndicator style={{ marginTop: 40 }} color={Accent.base} />;
 
   if (!item)
     return (
@@ -238,7 +239,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
 
-  editBtn: { backgroundColor: "#007AFF" },
+  editBtn: {
+    backgroundColor: Accent.base,
+  },
   deleteBtn: { backgroundColor: "#FF3B30" },
 
   btnText: { color: "#fff", fontSize: 16, fontWeight: "600" },

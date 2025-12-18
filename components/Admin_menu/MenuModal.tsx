@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import type { ImagePickerAsset } from "expo-image-picker";
+import { Accent } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
+import type { ImagePickerAsset } from "expo-image-picker";
+import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useState } from "react";
+import {
+    Alert,
+    Image,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from "react-native";
+
+const ACCENT = Accent.base;
+const ACCENT_LIGHT = Accent.light;
 
 type MenuForm = {
   name: string;
@@ -247,7 +250,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 15 },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: ACCENT_LIGHT,
     padding: 12,
     borderRadius: 8,
     marginBottom: 12,
@@ -266,12 +269,12 @@ priceInput: {
 vndLabel: {
   fontSize: 16,
   fontWeight: "bold",
-  color: "red",
+  color: ACCENT,
 },
 
   uploadBtn: {
     padding: 12,
-    backgroundColor: "#007AFF",
+    backgroundColor: ACCENT,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 4,
@@ -293,7 +296,7 @@ vndLabel: {
   },
   save: {
     padding: 12,
-    backgroundColor: "#28A745",
+    backgroundColor: ACCENT,
     flex: 1,
     borderRadius: 8,
     marginLeft: 5,

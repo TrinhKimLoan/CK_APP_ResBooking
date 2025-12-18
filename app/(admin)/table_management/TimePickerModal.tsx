@@ -10,14 +10,14 @@ import {
 } from 'react-native';
 
 const palette = {
-  backdrop: 'rgba(26, 26, 18, 0.35)',
+  backdrop: 'rgba(17, 24, 39, 0.35)',
   surface: '#FFFFFF',
-  shadow: '#E8D959',
-  textPrimary: '#1A1A12',
-  textSecondary: '#5C5300',
-  accent: '#FFF01F',
-  accentMuted: '#FFF6B1',
-  accentBorder: '#D4BC00',
+  shadow: '#f59e0b',
+  textPrimary: '#1F2937',
+  textSecondary: '#4B5563',
+  accent: '#f59e0b',
+  accentMuted: '#fff7eb',
+  accentBorder: '#d97706',
 };
 
 const TIME_STEP_MINUTES = 30;

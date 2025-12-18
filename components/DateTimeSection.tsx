@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import TimeWheel from "@/components/TimeWheel";
+import { Accent } from "@/constants/theme";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useState } from "react";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface DateTimeSectionProps {
   date: Date;
@@ -91,6 +92,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 10,
     marginTop: 10,
+    borderWidth: 1,
+    borderColor: Accent.light,
   },
   dateText: { fontSize: 16, fontWeight: "600" },
   modalOverlay: {
@@ -106,7 +109,7 @@ const styles = StyleSheet.create({
   },
   modalCloseBtn: {
     marginTop: 20,
-    backgroundColor: "#000",
+    backgroundColor: Accent.base,
     padding: 12,
     borderRadius: 10,
     alignItems: "center",

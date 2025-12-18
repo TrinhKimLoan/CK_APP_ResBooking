@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Accent } from "@/constants/theme";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface PeopleCounterProps {
   people: number;
@@ -31,7 +32,7 @@ export default function PeopleCounter({ people, setPeople }: PeopleCounterProps)
   );
 }
 
-const PRIMARY = "#EC5A11";
+const PRIMARY = Accent.base;
 const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", marginTop: 10 },
   label: { fontSize: 16 },
@@ -44,13 +45,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: Accent.light,
   },
   counterBtn: {
     paddingHorizontal: 14,
     paddingVertical: 6,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#FFFFFF",
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Accent.light,
   },
   counterText: {
     fontSize: 20,

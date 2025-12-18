@@ -1,4 +1,5 @@
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { Accent } from "@/constants/theme";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
 interface NoteSectionProps {
   note: string;
@@ -29,5 +30,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 90,
     textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: Accent.light,
   },
 });

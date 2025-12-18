@@ -1,6 +1,7 @@
-import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Accent } from "@/constants/theme";
 import { Table } from "@/types/database";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface TableItemProps {
   table: Table;
@@ -47,25 +48,21 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     marginBottom: 12,
-    borderWidth: 1,
   },
 
   /* ===== AVAILABLE ===== */
   available: {
-    backgroundColor: "#FFF4EE",
-    borderColor: "#EC5A11",
+    backgroundColor: "#fff7eb",
   },
 
   /* ===== SELECTED ===== */
   selected: {
-    backgroundColor: "#ea804cff",
-    borderColor: "#EC5A11",
+    backgroundColor: Accent.base,
   },
 
   /* ===== DISABLED ===== */
   disabled: {
     backgroundColor: "#DDD",
-    borderColor: "#CCC",
     opacity: 0.6,
   },
 

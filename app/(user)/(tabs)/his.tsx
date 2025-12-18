@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
+import { Accent } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import OrderItem from "../../../components/OrderItem";
 
 export default function BookingScreen() {
@@ -31,6 +32,7 @@ export default function BookingScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Lịch sử đặt đơn</Text>
       <TouchableOpacity
         style={styles.createButton}
         onPress={() => router.push("/(user)/(tabs)/create_order")}
@@ -53,8 +55,15 @@ export default function BookingScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#fff" },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 16,
+    alignSelf: "center",
+    textAlign: "center",
+  },
   createButton: {
-    backgroundColor: "#EC5A11",
+    backgroundColor: Accent.base,
     padding: 14,
     borderRadius: 10,
     marginBottom: 20,

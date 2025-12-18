@@ -1,8 +1,8 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { Accent, Colors, Fonts } from '@/constants/theme';
 import { useAuth } from '@/context/auth';
-import { Colors, Fonts } from '@/constants/theme';
+import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 
 export default function ProfileInfoScreen() {
   const { user, signOut } = useAuth();
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: Accent.light,
     borderRadius: 8,
     padding: 12,
     marginBottom: 15,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.sans,
   },
   saveButton: {
-    backgroundColor: '#f59e0b',
+    backgroundColor: Accent.base,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',

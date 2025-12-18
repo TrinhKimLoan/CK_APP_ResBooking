@@ -23,14 +23,14 @@ import {
 const palette = {
   background: '#FFFFFF',
   surface: '#FFFFFF',
-  surfaceBorder: '#F4E664',
-  surfaceMuted: '#FFF6B1',
-  accent: '#FFF01F',
-  accentDark: '#D4BC00',
-  textPrimary: '#1A1A12',
-  textSecondary: '#5C5300',
-  textMuted: '#7A740A',
-  overlay: 'rgba(255,255,255,0.6)',
+  surfaceBorder: '#fbbf24',
+  surfaceMuted: '#fff7eb',
+  accent: '#f59e0b',
+  accentDark: '#d97706',
+  textPrimary: '#1F2937',
+  textSecondary: '#4B5563',
+  textMuted: '#6B7280',
+  overlay: 'rgba(245,158,11,0.08)',
 };
 
 interface TableManagementViewProps {
@@ -194,7 +194,7 @@ export function TableManagementView({
                   activeOpacity={0.85}
                 >
                   <Text style={styles.inputValue}>{selectedDate || getTodayString()}</Text>
-                  <Ionicons name="calendar-outline" size={20} color="#6B7280" />
+                  <Ionicons name="calendar-outline" size={20} color={palette.textMuted} />
                 </TouchableOpacity>
               </View>
 
@@ -207,7 +207,7 @@ export function TableManagementView({
                     activeOpacity={0.85}
                   >
                     <Text style={styles.inputValue}>{formatTimeLabel(startTime)}</Text>
-                    <Ionicons name="time-outline" size={20} color="#6B7280" />
+                    <Ionicons name="time-outline" size={20} color={palette.textMuted} />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.timeField}>
@@ -218,7 +218,7 @@ export function TableManagementView({
                     activeOpacity={0.85}
                   >
                     <Text style={styles.inputValue}>{formatTimeLabel(endTime)}</Text>
-                    <Ionicons name="time-outline" size={20} color="#6B7280" />
+                    <Ionicons name="time-outline" size={20} color={palette.textMuted} />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -286,6 +286,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: palette.textPrimary,
     marginBottom: 16,
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   filterCard: {
     backgroundColor: palette.surface,
@@ -294,7 +296,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: palette.surfaceBorder,
     marginBottom: 20,
-    shadowColor: '#E8D959',
+    shadowColor: palette.accent,
     shadowOpacity: 0.12,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },

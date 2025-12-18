@@ -1,18 +1,18 @@
-import { Tabs } from "expo-router";
+import { Accent } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-
-const PRIMARY = "#EC5A11";
+import { Tabs } from "expo-router";
 
 export default function UserLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: PRIMARY,
-        tabBarInactiveTintColor: "#999",
+        tabBarActiveTintColor: Accent.base,
+        tabBarInactiveTintColor: "#6B7280",
+        tabBarActiveBackgroundColor: "#FFFFFF",
         tabBarStyle: {
           backgroundColor: "#fff",
-          borderTopColor: "#eee",
+          borderTopColor: "#e5e7eb",
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -43,7 +43,7 @@ export default function UserLayout() {
       <Tabs.Screen
         name="his"
         options={{
-          title: "Đơn của tôi",
+          tabBarLabel: "Lịch sử đặt đơn",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="time" size={size} color={color} />
           ),

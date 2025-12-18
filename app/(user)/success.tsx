@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
+import { Accent } from "@/constants/theme";
+import { router, useLocalSearchParams } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Success() {
   const { orderId } = useLocalSearchParams();
@@ -20,11 +21,23 @@ export default function Success() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
-  title: { fontSize: 22, fontWeight: "700", marginBottom: 20 },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 20,
+    alignSelf: "center",
+    textAlign: "center",
+  },
   btn: {
     marginTop: 30,
-    backgroundColor: "#000",
+    backgroundColor: Accent.base,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,

@@ -1,9 +1,10 @@
-import { ScrollView, Text, StyleSheet } from 'react-native';
-import { Fonts } from '@/constants/theme';
+import { Accent, Fonts } from '@/constants/theme';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 export default function PrivacyPolicyScreen() {
   return (
     <ScrollView style={styles.container}>
+      <Text style={styles.title}>Điều khoản & bảo mật</Text>
 
       <Text style={styles.sectionTitle}>1. Giới thiệu</Text>
       <Text style={styles.text}>
@@ -52,11 +53,21 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
+  title: {
+    fontFamily: Fonts.sans,
+    fontWeight: '700',
+    fontSize: 24,
+    marginBottom: 16,
+    alignSelf: 'center',
+    textAlign: 'center',
+  },
   sectionTitle: {
     fontFamily: Fonts.sans,
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 5,
+    color: Accent.base,
+    marginTop: 16,
   },
   text: {
     fontFamily: Fonts.sans,

@@ -1,4 +1,5 @@
 // app/(admin)/_layout.tsx
+import { Accent } from '@/constants/theme';
 import { useAuth } from '@/context/auth';
 import { Ionicons } from '@expo/vector-icons';
 import { Redirect, Tabs } from 'expo-router';
@@ -16,11 +17,12 @@ export default function AdminLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#1a1a1a',
-          borderTopColor: '#333',
+          backgroundColor: '#FFFFFF',
+          borderTopColor: '#e5e7eb',
         },
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#888',
+        tabBarActiveTintColor: Accent.base,
+        tabBarInactiveTintColor: '#6B7280',
+        tabBarActiveBackgroundColor: '#FFFFFF',
         tabBarLabelStyle: {
           fontSize: 12,
         },
@@ -45,14 +47,14 @@ export default function AdminLayout() {
           ),
         }}
       />
-      <Tabs.Screen 
-        name="menu-management" 
-        options={{ 
-          title: "Quản lý Menu",
+      <Tabs.Screen
+        name="menu-management"
+        options={{
+          tabBarLabel: 'Quản lý Menu',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="fast-food" size={size} color={color} />
           ),
-        }} 
+        }}
       />
     </Tabs>
   );

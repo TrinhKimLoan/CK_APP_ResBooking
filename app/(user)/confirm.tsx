@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
+import { Accent } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Confirm() {
   const params = useLocalSearchParams();
@@ -112,7 +113,7 @@ export default function Confirm() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={Accent.base} />
         <Text style={{ marginTop: 10 }}>Đang tải thông tin...</Text>
       </View>
     );
@@ -122,7 +123,7 @@ export default function Confirm() {
   if (!dateStr || !people || !tableId) {
     return (
       <View style={styles.center}>
-        <Text style={{ color: "red", fontSize: 18 }}>
+        <Text style={{ color: "#DC2626", fontSize: 18 }}>
           Dữ liệu truyền sang confirm bị thiếu!
         </Text>
         <TouchableOpacity onPress={() => router.back()} style={styles.btn}>
@@ -163,22 +164,26 @@ const styles = StyleSheet.create({
   popup: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
   },
   header: {
     fontWeight: "700",
     fontSize: 18,
     marginTop: 20,
+    alignSelf: "center",
+    textAlign: "center",
   },
   box: {
     marginTop: 10,
     padding: 15,
-    backgroundColor: "#F2F2F2",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Accent.light,
   },
   btn: {
     marginTop: 40,
-    backgroundColor: "#000",
+    backgroundColor: Accent.base,
     paddingVertical: 14,
     borderRadius: 12,
   },

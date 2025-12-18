@@ -1,3 +1,4 @@
+import { Accent } from '@/constants/theme';
 import { useAuth } from '@/context/auth';
 import { supabase } from '@/lib/supabase';
 import type { Table } from '@/types/database';
@@ -22,18 +23,18 @@ export const TABLE_STATUS_DISPLAY: Record<TableStatus, {
   available: {
     label: 'Trống',
     cardBackground: '#FFFFFF',
-    cardBorder: '#F4E664',
-    textColor: '#1A1A12',
-    badgeBackground: '#FFF6B1',
-    badgeText: '#645800',
+    cardBorder: Accent.light,
+    textColor: '#1F2937',
+    badgeBackground: '#fff7eb',
+    badgeText: Accent.dark,
   },
   occupied: {
     label: 'Không còn chỗ',
-    cardBackground: '#FFE5AF',
-    cardBorder: '#F3C05E',
-    textColor: '#7A3B00',
-    badgeBackground: '#F7CE86',
-    badgeText: '#7A3B00',
+    cardBackground: '#fef3c7',
+    cardBorder: Accent.base,
+    textColor: '#92400e',
+    badgeBackground: '#fde68a',
+    badgeText: '#92400e',
   },
 };
 
